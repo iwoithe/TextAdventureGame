@@ -1,10 +1,8 @@
-#include "iwstring.h"
-
-using namespace iw;
+#include "game/game.h"
 
 int main()
 {
-    String("Hello, World!").writeToConsole();
+    game()->run();
 
     return 0;
 }

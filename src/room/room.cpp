@@ -1,0 +1,55 @@
+#include "room.h"
+
+#include "items/stubitem.h"
+
+Room::Room()
+{
+    m_description = String("");
+    m_item = new StubItem();
+    m_pos = RoomPos(0, 0);
+}
+
+Room::Room(const String& description)
+{
+    m_description = description;
+    m_item = new StubItem();
+    m_pos = RoomPos(0, 0);
+}
+
+Room::Room(IItem* item)
+{
+    m_description = String("");
+    m_item = item;
+    m_pos = RoomPos(0, 0);
+}
+
+Room::Room(const RoomPos& roomPos)
+{
+    m_description = String("");
+    m_item = new StubItem();
+    m_pos = roomPos;
+}
+
+Room::Room(const String& description, IItem* item, const RoomPos& roomPos)
+{
+    m_description = description;
+    m_item = item;
+    m_pos = roomPos;
+}
+
+Room::~Room()
+{
+    if (m_item != nullptr) {
+        delete m_item;
+    }
+}
+
+const RoomPos& Room::roomPos() const
+{
+    return m_pos;
+}
+
+void Room::setRoomPos(const RoomPos& roomPos)
+{
+    m_pos = roomPos;
+}

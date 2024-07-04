@@ -1,3 +1,5 @@
-
-
+add_subdirectory(game)
+add_subdirectory(global)
+add_subdirectory(items)
 add_subdirectory(main)
+add_subdirectory(room)
