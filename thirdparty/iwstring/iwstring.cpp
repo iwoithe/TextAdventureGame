@@ -389,7 +389,7 @@ void String::setData(char c, bool clearFirst)
     }
 
     m_data[0] = c;
-    appendNullTerminator();
+    m_data[1] = '\0';
 }
 
 void String::setData(const char* d, bool clearFirst)
