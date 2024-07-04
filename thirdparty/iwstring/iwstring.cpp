@@ -53,22 +53,22 @@ String::String()
 
 String::String(const double& d)
 {
-    setData(std::to_string(d).data());
+    setData(std::to_string(d).data(), false);
 }
 
 String::String(const float& f)
 {
-    setData(std::to_string(f).data());
+    setData(std::to_string(f).data(), false);
 }
 
 String::String(const int& i)
 {
-    setData(std::to_string(i).data());
+    setData(std::to_string(i).data(), false);
 }
 
 String::String(const size_t& s)
 {
-    setData(std::to_string(s).data());
+    setData(std::to_string(s).data(), false);
 }
 
 String::String(char c)
