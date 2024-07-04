@@ -10,6 +10,7 @@
 
 #include "room/room.h"
 
+// TODO: "Special" keys return 224 as well to avoid clashes with other ASCII characters
 #define KEY_ENTER 13
 #define KEY_ESCAPE 27
 #define KEY_UP 72
