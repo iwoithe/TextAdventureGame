@@ -93,8 +93,8 @@ Any Game::getInput(InputMode inputMode, bool print)
 void Game::handleInput()
 {
     if (kbhit()) {
-        int c = getch();
-        if (c == KEY_ESCAPE) {
+        int key = getch();
+        if (key == KEY_ESCAPE) {
             switch (m_currentMenu) {
                 case Menu::Main:
                     m_isRunning = false;
@@ -110,7 +110,7 @@ void Game::handleInput()
 
         switch (m_currentMenu) {
             case Menu::Main:
-                if (c == KEY_m) {
+                if (key == KEY_m) {
                     m_currentMenu = Menu::MoveRoom;
                     m_currentMenuChanged.send(m_currentMenu);
                 }
