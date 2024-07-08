@@ -6,6 +6,8 @@
 #include "global/igameobject.h"
 #include "singleton/singletonmanager.h"
 
+#include "items/iitem.h"
+
 #include <ostream>
 
 struct RoomId {
@@ -15,8 +17,14 @@ struct RoomId {
 
 struct PlayerData {
     RoomId currentRoom;
+    int health;
+    int maxHealth;
 };
 
+struct InventoryItem {
+    int id;
+    IItem* item;
+};
 
 std::ostream& operator<<(std::ostream& os, const PlayerData& playerData);
 
@@ -25,14 +33,21 @@ class Player : public IGameObject
     INJECT_SINGLETON_ALIAS(dispatcher, dispatcher, Dispatcher);
 public:
     Player();
-    ~Player() = default;
+    ~Player();
 
     void init() override;
     void deInit() override;
 
+    void heal(const int& amount);
     void moveRoom(Direction dir);
+
+    void addItemToInventory(IItem* item);
 private:
     PlayerData m_playerData;
+
+    std::vector<InventoryItem> m_inventory;
+
+    int m_itemId;
 };
 
 #endif // PLAYER_PLAYER_H

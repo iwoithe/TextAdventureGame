@@ -1,6 +1,8 @@
 #include "game.h"
 
 #include <conio.h>
+#include <cstdlib>
+#include <time.h>
 
 #include "async/processevents.h"
 
@@ -8,10 +10,13 @@
 #include "dispatcher/dispatcher.h"
 #include "global/log.h"
 
+#include "items/items.h"
 #include "player/player.h"
 
 Game::Game()
 {
+    srand(time(0));
+
     initGameObjects();
 
     m_isRunning = false;
@@ -73,13 +78,15 @@ void Game::addRoom(Room* r)
 
 void Game::addRoom(const String& description, IItem* item, const RoomPos& roomPos)
 {
+    dispatcher()->dispatch("player-add-item-to-inventory", Parameters({ Any(item) }));
+
     Room* r = new Room(description, item, roomPos);
     m_rooms.push_back(r);
 }
 
 void Game::addRandomRoom(const RoomPos& roomPos)
 {
-    addRoom("Hello", nullptr, roomPos);
+    addRoom("Hello", getRandomItem(), roomPos);
 }
 
 Room* Game::room(const RoomPos& roomPos)

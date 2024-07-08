@@ -6,6 +6,7 @@ set(MODULE_SRC
 
 set(MODULE_LINK
     dispatcher
+    items
 )
 
 setup_module()
