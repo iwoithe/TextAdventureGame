@@ -5,7 +5,6 @@ set(GLOBAL_INCLUDE
     ${PROJECT_SOURCE_DIR}/thirdparty
     ${PROJECT_SOURCE_DIR}/thirdparty/iwany
     ${PROJECT_SOURCE_DIR}/thirdparty/iwstring
-    ${PROJECT_SOURCE_DIR}/thirdparty/iwvariant
     ${PROJECT_SOURCE_DIR}/thirdparty/kors_async/include
 )
 
@@ -13,7 +12,6 @@ set(GLOBAL_LIBRARIES
     global
     iwany
     iwstring
-    iwvariant
     kors_async
 )
 
