@@ -119,7 +119,7 @@ InventoryItem Player::inventoryItemFromIndex(const int& index)
 
 InventoryItem Player::inventoryItemFromId(const int& id)
 {
-    for (int i = 0; i < m_inventory; i++) {
+    for (int i = 0; i < m_inventory.size(); i++) {
         if (m_inventory[i].id == id) {
             return m_inventory[i];
         }
