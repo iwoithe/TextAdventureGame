@@ -14,11 +14,12 @@ Game::Game()
 {
     initGameObjects();
 
-    m_currentMenu = Menu::Main;
     m_isRunning = false;
     m_rooms = {};
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = room(RoomPos(0, 0));
+
+    setMenu(Menu::Main);
 
     m_currentMenuChanged.onReceive(nullptr, [](Menu menu) {
         switch (menu) {
@@ -103,6 +104,16 @@ async::Channel<Menu> Game::currentMenuChanged()
     return m_currentMenuChanged;
 }
 
+void Game::setMenu(Menu menu)
+{
+    if (menu == m_currentMenu) {
+        return;
+    }
+
+    m_currentMenu = menu;
+    m_currentMenuChanged.send(menu);
+}
+
 void Game::handleInput()
 {
     if (kbhit()) {
@@ -134,8 +145,7 @@ void Game::handleQuit(const int& key)
             case Menu::MoveRoom:
             case Menu::Inventory:
             case Menu::Spellbook:
-                m_currentMenu = Menu::Main;
-                m_currentMenuChanged.send(m_currentMenu);
+                setMenu(Menu::Main);
                 break;
         }
     }
@@ -145,15 +155,12 @@ void Game::mainMenu(const int& key)
 {
     switch (key) {
         case KEY_m:
-            m_currentMenu = Menu::MoveRoom;
-            m_currentMenuChanged.send(m_currentMenu);
+            setMenu(Menu::MoveRoom);
             break;
         case KEY_i:
-            m_currentMenu = Menu::Inventory;
-            m_currentMenuChanged.send(m_currentMenu);
+            setMenu(Menu::Inventory);
         case KEY_s:
-            m_currentMenu = Menu::Spellbook;
-            m_currentMenuChanged.send(m_currentMenu);
+            setMenu(Menu::Spellbook);
         default:
             break;
     }
@@ -187,9 +194,7 @@ void Game::moveRoomMenu(const int& key)
         }
 
         dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
-
-        m_currentMenu = Menu::Main;
-        m_currentMenuChanged.send(m_currentMenu);
+        setMenu(Menu::Main);
     }
 
     switch (key) {

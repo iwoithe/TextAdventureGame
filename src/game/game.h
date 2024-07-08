@@ -124,6 +124,8 @@ public:
     Menu currentMenu() const;
     async::Channel<Menu> currentMenuChanged();
 
+    void setMenu(Menu menu);
+
     void handleInput();
     void handleQuit(const int& key);
     void mainMenu(const int& key);
