@@ -166,6 +166,7 @@ void Game::mainMenu(const int& key)
             break;
         case KEY_i:
             setMenu(Menu::Inventory);
+            break;
         case KEY_s:
             setMenu(Menu::Spellbook);
         default:
