@@ -1,14 +1,18 @@
 #ifndef GAME_H
 #define GAME_H
 
+#include "async/asyncable.h"
 #include "async/channel.h"
 #include "async/notification.h"
 
-#include "global/inject.h"
+#include "dispatcher/dispatcher.h"
+#include "global/enums.h"
+#include "global/igameobject.h"
 #include "iwstring.h"
 #include "iwany.h"
 
 #include "room/room.h"
+#include "singleton/singletonmanager.h"
 
 // TODO: "Special" keys return 224 as well to avoid clashes with other ASCII characters
 #define KEY_ENTER 13
@@ -19,6 +23,17 @@
 #define KEY_DOWN 80
 
 #define KEY_SP 32
+
+#define KEY_0 48
+#define KEY_1 49
+#define KEY_2 50
+#define KEY_3 51
+#define KEY_4 52
+#define KEY_5 53
+#define KEY_6 54
+#define KEY_7 55
+#define KEY_8 56
+#define KEY_9 57
 
 #define KEY_A 65
 #define KEY_B 66
@@ -90,14 +105,21 @@ enum Menu {
 using namespace app;
 using namespace iw;
 
-class Game
+class Game : public async::Asyncable
 {
+    INJECT_SINGLETON_ALIAS(dispatcher, dispatcher, Dispatcher);
 public:
     Game();
     ~Game();
 
-    void addRoom(Room* room);
+    void addGameObject(IGameObject* gameObject);
+    void initGameObjects();
+
+    void addRoom(Room* r);
     void addRoom(const String& description, IItem* item, const RoomPos& roomPos);
+    void addRandomRoom(const RoomPos& roomPos);
+    Room* room(const RoomPos& roomPos);
+
 
     Menu currentMenu() const;
     async::Channel<Menu> currentMenuChanged();
@@ -106,17 +128,28 @@ public:
     Any getInput(InputMode inputMode, bool print);
     void handleInput();
 
+    void moveRoomMenu(const int& key);
+
+    async::Channel<Direction> playerMoveRoomRequested();
+
     bool isRunning() const;
     void run();
 
 private:
+    std::vector<IGameObject*> m_gameObjects;
+
     Menu m_currentMenu;
     async::Channel<Menu> m_currentMenuChanged;
 
+    async::Channel<Direction> m_playerMoveRoomRequested;
+
     bool m_isRunning;
     std::vector<Room*> m_rooms;
-};
 
-STATIC_GETTER(game, Game)
+    Room* m_currentRoom;
+
+    // Relative room, a value 1 - 4, only to be used in moveRoomMenu()
+    int _m__moveToRoomRel;
+};
 
 #endif // GAME_H

@@ -22,6 +22,9 @@ public:
     Room(const String& description, IItem* item, const RoomPos& roomPos);
     ~Room();
 
+    IItem* item() const;
+    const bool isEmpty() const;
+
     const RoomPos& roomPos() const;
     void setRoomPos(const RoomPos& roomPos);
 

@@ -44,6 +44,16 @@ Room::~Room()
     }
 }
 
+IItem* Room::item() const
+{
+    return m_item;
+}
+
+const bool Room::isEmpty() const
+{
+    return (m_item == nullptr);
+}
+
 const RoomPos& Room::roomPos() const
 {
     return m_pos;

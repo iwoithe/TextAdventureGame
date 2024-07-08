@@ -6,5 +6,6 @@ target_include_directories(textadventuregame PUBLIC
 )
 target_link_libraries(textadventuregame PRIVATE
     ${GLOBAL_LIBRARIES}
+    singleton
     game
 )
