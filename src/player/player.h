@@ -1,6 +1,11 @@
 #ifndef PLAYER_PLAYER_H
 #define PLAYER_PLAYER_H
 
+#include <ostream>
+
+#include "async/asyncable.h"
+#include "async/channel.h"
+
 #include "dispatcher/dispatcher.h"
 #include "global/enums.h"
 #include "global/igameobject.h"
@@ -8,7 +13,7 @@
 
 #include "items/iitem.h"
 
-#include <ostream>
+using namespace app;
 
 struct RoomId {
     int x;
@@ -43,8 +48,14 @@ public:
 
     void addItemToInventory(IItem* item);
 
-    void displayInventory();
+    void listInventory();
+
     void displayStats() const;
+
+    void useInventoryItem(const int& index);
+
+    int inventorySize() const;
+    async::Channel<int> inventorySizeChanged();
 
     InventoryItem inventoryItemFromIndex(const int& index);
     InventoryItem inventoryItemFromId(const int& id);
@@ -54,6 +65,8 @@ private:
     std::vector<InventoryItem> m_inventory;
 
     int m_itemId;
+
+    async::Channel<int> m_inventorySizeChanged;
 };
 
 #endif // PLAYER_PLAYER_H

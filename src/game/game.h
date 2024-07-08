@@ -15,6 +15,7 @@
 #include "singleton/singletonmanager.h"
 
 // TODO: "Special" keys return 224 as well to avoid clashes with other ASCII characters
+#define KEY_BACKSPACE '\b'
 #define KEY_ENTER 13
 #define KEY_ESCAPE 27
 #define KEY_UP 72
@@ -155,6 +156,11 @@ private:
 
     // Relative room, a value 1 - 4, only to be used in moveRoomMenu()
     int _m__moveToRoomRel;
+
+    // handleInventoryMenu inputted number
+    int _m__himNum = 0;
+
+    int m_playerInventorySize;
 };
 
 #endif // GAME_H

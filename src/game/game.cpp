@@ -8,6 +8,7 @@
 
 #include "global/delete.h"
 #include "dispatcher/dispatcher.h"
+#include "global/ints.h"
 #include "global/log.h"
 
 #include "items/items.h"
@@ -23,6 +24,7 @@ Game::Game()
     m_rooms = {};
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = room(RoomPos(0, 0));
+    m_playerInventorySize = 0;
 
     init();
 
@@ -55,7 +57,12 @@ void Game::addGameObject(IGameObject* gameObject)
 
 void Game::initGameObjects()
 {
-    addGameObject(new Player());
+    Player* player = new Player();
+    player->inventorySizeChanged().onReceive(nullptr, [&](int newSize) {
+        m_playerInventorySize = newSize;
+    });
+
+    addGameObject(player);
 
     for (IGameObject* gameObject : m_gameObjects) {
         gameObject->init();
@@ -185,13 +192,10 @@ void Game::displayInventoryInstructions()
     infoText.append("Press [Esc] to return to ");
     infoText.appendColor(Color::Green, ColorLayer::Foreground);
     infoText.append("[Main Menu]");
-    infoText.appendColor(Color::Magenta, ColorLayer::Foreground);
-    infoText.append(", [u] to open the ");
-    infoText.appendColor(Color::Green, ColorLayer::Foreground);
-    infoText.append("[Use Item Menu]");
     infoText.appendColor(Color::Default, ColorLayer::Foreground);
     infoText.writeToConsole();
-    dispatcher()->dispatch("player-display-inventory", Parameters());
+    dispatcher()->dispatch("player-list-inventory", Parameters());
+    String("Enter item number:  ").writeToConsole(false);
 }
 
 void Game::handleInput()
@@ -308,10 +312,57 @@ void Game::handleMoveRoomMenu(const int& key)
 
 void Game::handleInventoryMenu(const int& key)
 {
+    if (key == KEY_ENTER) {
+        // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
+        String().writeToConsole();
+        dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
+        
+        String(_m__himNum).writeToConsole();
+        _m__himNum = 0;
+        // Flush and end the current line
+        setMenu(Menu::Main);
+    }
+
+    if (key == KEY_BACKSPACE) {
+        String("\033[").append(numDigitsInNum(_m__himNum)).append("D\033[0K").writeToConsole(false);
+        _m__himNum /= 10;
+        String(_m__himNum).writeToConsole(false);
+    }
+
     switch (key) {
-        case KEY_u:
-            // switch to item selection menu
-            break;
+        case KEY_0:
+            _m__himNum = concatenateInts(_m__himNum, 0);
+            goto finally;
+        case KEY_1:
+            _m__himNum = concatenateInts(_m__himNum, 1);
+            goto finally;
+        case KEY_2:
+            _m__himNum = concatenateInts(_m__himNum, 2);
+            goto finally;
+        case KEY_3:
+            _m__himNum = concatenateInts(_m__himNum, 3);
+            goto finally;
+        case KEY_4:
+            _m__himNum = concatenateInts(_m__himNum, 4);
+            goto finally;
+        case KEY_5:
+            _m__himNum = concatenateInts(_m__himNum, 5);
+            goto finally;
+        case KEY_6:
+            _m__himNum = concatenateInts(_m__himNum, 6);
+            goto finally;
+        case KEY_7:
+            _m__himNum = concatenateInts(_m__himNum, 7);
+            goto finally;
+        case KEY_8:
+            _m__himNum = concatenateInts(_m__himNum, 8);
+            goto finally;
+        case KEY_9:
+            _m__himNum = concatenateInts(_m__himNum, 9);
+            goto finally;
+        finally:
+            // numDigitsInNum(_m__himNum) - 1 as _m__himNum now has one more digit than is outputted
+            String("\033[").append(numDigitsInNum(_m__himNum) - 1).append("D\033[0K").append(_m__himNum).writeToConsole(false);
         default:
             break;
     }

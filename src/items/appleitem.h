@@ -13,9 +13,11 @@ class AppleItem : public IItem
 public:
     AppleItem();
     ~AppleItem() = default;
+    const String& name() const override;
     const String& description() const override;
     void use() override;
 private:
+    String m_name;
     String m_description;
     int m_healAmount;
 };

@@ -33,8 +33,12 @@ void Player::init()
         addItemToInventory(params[0].get<IItem*>());
     });
 
-    dispatcher()->reg("player-display-inventory", [&](Parameters params) {
-        displayInventory();
+    dispatcher()->reg("player-list-inventory", [&](Parameters params) {
+        listInventory();
+    });
+
+    dispatcher()->reg("player-use-inventory-item", [&](Parameters params) {
+        useInventoryItem(params[0].get<int>());
     });
 
     dispatcher()->reg("player-display-stats", [&](Parameters params) {
@@ -83,34 +87,67 @@ void Player::moveRoom(Direction dir)
 
 void Player::addItemToInventory(IItem* item)
 {
-    if (item != nullptr) {
-        m_inventory.push_back(InventoryItem(m_itemId++, item));
+    if (item == nullptr) {
+        return;
     }
+
+    m_inventory.push_back(InventoryItem(m_itemId++, item));
+    m_inventorySizeChanged.send(m_inventory.size());
 }
 
-void Player::displayInventory()
+void Player::listInventory()
 {
-    for (InventoryItem item : m_inventory) {
-        String("------").writeToConsole();
-        String("Item ID: ").append(item.id).writeToConsole();
-        if (item.item != nullptr) {
-            String("Item Description: ").append(item.item->description()).writeToConsole();
-        }
+    for (int i = 0; i < m_inventory.size(); i++) {
+        String inventoryText;
+        inventoryText.appendColor(Color::Blue, ColorLayer::Foreground);
+        // Listed 1-based, not 0-index
+        InventoryItem item = m_inventory[i];
+        inventoryText.append(i + 1).append(":");
+        inventoryText.appendColor(Color::Default, ColorLayer::Foreground);
+        inventoryText.append(" ").append(item.item->name()).append(" ");
+        inventoryText.appendColor(Color::Yellow, ColorLayer::Foreground);
+        inventoryText.append(item.item->description());
+        inventoryText.appendColor(Color::Default, ColorLayer::Foreground);
+        inventoryText.writeToConsole();
     }
 }
 
 void Player::displayStats() const
 {
     String stats;
-    stats.append("currentRoom: (").append(m_playerData.currentRoom.x).append(", ").append(m_playerData.currentRoom.y).append(")\n");
-    stats.append("health: ").append(m_playerData.health).append("\n");
-    stats.append("maxHealth: ").append(m_playerData.maxHealth);
+    stats.appendColor(Color::Cyan, ColorLayer::Foreground);
+    stats.append("Player Stats:\n");
+    stats.append("Current Room: (").append(m_playerData.currentRoom.x).append(", ").append(m_playerData.currentRoom.y).append(")\n");
+    stats.append("Health: ").append(m_playerData.health);
+    stats.appendColor(Color::Default, ColorLayer::Foreground);
     stats.writeToConsole();
+}
+
+void Player::useInventoryItem(const int& index)
+{
+    InventoryItem item = inventoryItemFromIndex(index);
+    if (item.item == nullptr) {
+        return;
+    }
+
+    item.item->use();
+    m_inventory.erase(m_inventory.begin() + index);
+    m_inventorySizeChanged.send(m_inventory.size());
+}
+
+int Player::inventorySize() const
+{
+    return m_inventory.size();
+}
+
+async::Channel<int> Player::inventorySizeChanged()
+{
+    return m_inventorySizeChanged;
 }
 
 InventoryItem Player::inventoryItemFromIndex(const int& index)
 {
-    if (index >= 0 && index < m_inventory.size()) {
+    if (index < 0 || index >= m_inventory.size()) {
         return InventoryItem();
     }
 
