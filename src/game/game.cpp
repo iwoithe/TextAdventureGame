@@ -116,7 +116,8 @@ void Game::gameIntro() const
 {
     String("Text Adventure Game").writeToConsole();
     String("Made by Ilias Woithe").writeToConsole();
-    String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [m] to enter the move menu").writeToConsole();
+    String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [Esc] or [q] to go back a menu/quit if in main menu").writeToConsole();
+    String("Press [m] to enter the move menu").writeToConsole();
     String("Press [i] to enter the inventory menu").writeToConsole();
     String("Press [u] to use an item (only works in the inventory menu)").writeToConsole();
     String("Press [s] to enter the spellbook menu").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
@@ -217,7 +218,7 @@ void Game::handleInput()
 
 void Game::handleQuit(const int& key)
 {
-    if (key == KEY_ESCAPE) {
+    if (key == KEY_ESCAPE || key == KEY_q) {
         switch (m_currentMenu) {
             case Menu::Main:
                 m_isRunning = false;
