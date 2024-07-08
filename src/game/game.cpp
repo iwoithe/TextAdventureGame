@@ -124,6 +124,9 @@ void Game::gameIntro() const
 
 void Game::displayMenuIntro(Menu menu)
 {
+    // Insert blank line between title text
+    String().writeToConsole();
+
     String menuTitleText;
     menuTitleText.appendColor(Color::Green, ColorLayer::Foreground);
     switch (menu) {
@@ -143,8 +146,6 @@ void Game::displayMenuIntro(Menu menu)
             break;
     }
 
-    // Insert blank line between title text
-    String().writeToConsole();
     menuTitleText.appendColor(Color::Default, ColorLayer::Foreground);
     menuTitleText.writeToConsole();
 
