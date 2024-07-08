@@ -45,6 +45,9 @@ public:
 
     void displayInventory();
     void displayStats() const;
+
+    InventoryItem inventoryItemFromIndex(const int& index);
+    InventoryItem inventoryItemFromId(const int& id);
 private:
     PlayerData m_playerData;
 

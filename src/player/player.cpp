@@ -107,3 +107,26 @@ void Player::displayStats() const
     stats.append("maxHealth: ").append(m_playerData.maxHealth);
     stats.writeToConsole();
 }
+
+InventoryItem Player::inventoryItemFromIndex(const int& index)
+{
+    if (index >= 0 && index < m_inventory.size()) {
+        return InventoryItem();
+    }
+
+    return m_inventory[index];
+}
+
+InventoryItem Player::inventoryItemFromId(const int& id)
+{
+    int i = 0;
+    while (true) {
+        if (m_inventory[i].id == id) {
+            return m_inventory[i];
+        }
+
+        i++;
+    }
+
+    return InventoryItem();
+}
