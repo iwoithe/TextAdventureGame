@@ -22,7 +22,7 @@ Player::Player()
 
 Player::~Player()
 {
-    for (InventoryItem& item : m_inventory) {
+    for (InventoryItem item : m_inventory) {
         DEL_PTR_S(item.item);
     }
 }
@@ -31,6 +31,14 @@ void Player::init()
 {
     dispatcher()->reg("player-add-item-to-inventory", [&](Parameters params) {
         addItemToInventory(params[0].get<IItem*>());
+    });
+
+    dispatcher()->reg("player-display-inventory", [&](Parameters params) {
+        displayInventory();
+    });
+
+    dispatcher()->reg("player-display-stats", [&](Parameters params) {
+        displayStats();
     });
 
     dispatcher()->reg("player-heal", [&](Parameters params) {
@@ -75,5 +83,27 @@ void Player::moveRoom(Direction dir)
 
 void Player::addItemToInventory(IItem* item)
 {
-    m_inventory.push_back(InventoryItem(m_itemId++, item));
+    if (item != nullptr) {
+        m_inventory.push_back(InventoryItem(m_itemId++, item));
+    }
+}
+
+void Player::displayInventory()
+{
+    for (InventoryItem item : m_inventory) {
+        String("------").writeToConsole();
+        String("Item ID: ").append(item.id).writeToConsole();
+        if (item.item != nullptr) {
+            String("Item Description: ").append(item.item->description()).writeToConsole();
+        }
+    }
+}
+
+void Player::displayStats() const
+{
+    String stats;
+    stats.append("currentRoom: (").append(m_playerData.currentRoom.x).append(", ").append(m_playerData.currentRoom.y).append(")\n");
+    stats.append("health: ").append(m_playerData.health).append("\n");
+    stats.append("maxHealth: ").append(m_playerData.maxHealth);
+    stats.writeToConsole();
 }

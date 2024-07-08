@@ -24,26 +24,51 @@ Game::Game()
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = room(RoomPos(0, 0));
 
-    setMenu(Menu::Main);
-
-    m_currentMenuChanged.onReceive(nullptr, [](Menu menu) {
+    m_currentMenuChanged.onReceive(nullptr, [&](Menu menu) {
+        String menuTitleText;
+        menuTitleText.appendColor(Color::Green, ColorLayer::Foreground);
         switch (menu) {
             case Menu::Main:
-                String("Main").writeToConsole();
+                menuTitleText.append("[Main Menu]");
                 break;
             case Menu::MoveRoom:
-                String("Move Room").writeToConsole();
+                menuTitleText.append("[Move Room Menu]");
                 break;
             case Menu::Inventory:
-                String("Inventory").writeToConsole();
+                menuTitleText.append("[Inventory Menu]");
                 break;
             case Menu::Spellbook:
-                String("Spellbook").writeToConsole();
+                menuTitleText.append("[Spellbook Menu]");
+                break;
+            default:
+                break;
+        }
+
+        // Insert blank line between title text
+        String().writeToConsole();
+        menuTitleText.appendColor(Color::Default, ColorLayer::Foreground);
+        menuTitleText.writeToConsole();
+
+        // Contextual text/instructions
+        switch (menu) {
+            case Menu::Main:
+                dispatcher()->dispatch("player-display-stats", Parameters());
+                break;
+            case Menu::MoveRoom:
+                displayMoveRoomMenuInstructions();
+                break;
+            case Menu::Inventory:
+                displayInventoryInstructions();
+                break;
+            case Menu::Spellbook:
                 break;
             default:
                 break;
         }
     });
+
+    gameIntro();
+    setMenu(Menu::Main);
 }
 
 Game::~Game()
@@ -121,6 +146,42 @@ void Game::setMenu(Menu menu)
     m_currentMenuChanged.send(menu);
 }
 
+void Game::gameIntro() const
+{
+    String("Text Adventure Game").writeToConsole();
+    String("Made by Ilias Woithe").writeToConsole();
+    String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [m] to enter the move menu").writeToConsole();
+    String("Press [i] to enter the inventory menu").writeToConsole();
+    String("Press [u] to use an item (only works in the inventory menu)").writeToConsole();
+    String("Press [s] to enter the spellbook menu").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
+}
+
+void Game::displayMoveRoomMenuInstructions() const
+{
+    String infoText;
+    infoText.appendColor(Color::Magenta, ColorLayer::Foreground);
+    infoText.append("Type 1 - 4 to change the room you want to move to");
+    infoText.appendColor(Color::Default, ColorLayer::Foreground);
+    infoText.writeToConsole();
+    String("Move to room:  ").writeToConsole(false);
+}
+
+void Game::displayInventoryInstructions()
+{
+    String infoText;
+    infoText.appendColor(Color::Magenta, ColorLayer::Foreground);
+    infoText.append("Press [Esc] to return to ");
+    infoText.appendColor(Color::Green, ColorLayer::Foreground);
+    infoText.append("[Main Menu]");
+    infoText.appendColor(Color::Magenta, ColorLayer::Foreground);
+    infoText.append(", [u] to open the ");
+    infoText.appendColor(Color::Green, ColorLayer::Foreground);
+    infoText.append("[Use Item Menu]");
+    infoText.appendColor(Color::Default, ColorLayer::Foreground);
+    infoText.writeToConsole();
+    dispatcher()->dispatch("player-display-inventory", Parameters());
+}
+
 void Game::handleInput()
 {
     if (kbhit()) {
@@ -129,12 +190,13 @@ void Game::handleInput()
 
         switch (m_currentMenu) {
             case Menu::Main:
-                mainMenu(key);
+                handleMainMenu(key);
                 break;
             case Menu::MoveRoom:
-                moveRoomMenu(key);
+                handleMoveRoomMenu(key);
                 break;
             case Menu::Inventory:
+                handleInventoryMenu(key);
                 break;
             case Menu::Spellbook:
                 break;
@@ -158,7 +220,7 @@ void Game::handleQuit(const int& key)
     }
 }
 
-void Game::mainMenu(const int& key)
+void Game::handleMainMenu(const int& key)
 {
     switch (key) {
         case KEY_m:
@@ -174,49 +236,69 @@ void Game::mainMenu(const int& key)
     }
 }
 
-void Game::moveRoomMenu(const int& key)
+void Game::handleMoveRoomMenu(const int& key)
 {
     if (key == KEY_ENTER && _m__moveToRoomRel > 0 && _m__moveToRoomRel <= 4) {
         Direction dir;
+        RoomPos newPos;
         switch (_m__moveToRoomRel) {
             case 1:
                 dir = Direction::Left;
-                addRandomRoom(RoomPos(m_currentRoom->roomPos().x - 1, m_currentRoom->roomPos().y));
+                newPos = RoomPos(m_currentRoom->roomPos().x - 1, m_currentRoom->roomPos().y);
                 break;
             case 2:
                 dir = Direction::Up;
-                addRandomRoom(RoomPos(m_currentRoom->roomPos().x, m_currentRoom->roomPos().y + 1));
+                newPos = RoomPos(m_currentRoom->roomPos().x, m_currentRoom->roomPos().y + 1);
                 break;
             case 3:
                 dir = Direction::Right;
-                addRandomRoom(RoomPos(m_currentRoom->roomPos().x + 1, m_currentRoom->roomPos().y));
+                newPos = RoomPos(m_currentRoom->roomPos().x + 1, m_currentRoom->roomPos().y);
                 break;
             case 4:
                 dir = Direction::Down;
-                addRandomRoom(RoomPos(m_currentRoom->roomPos().x, m_currentRoom->roomPos().y - 1));
+                newPos = RoomPos(m_currentRoom->roomPos().x, m_currentRoom->roomPos().y - 1);
                 break;
             default:
                 dir = Direction::Right;
-                addRandomRoom(RoomPos(m_currentRoom->roomPos().x + 1, m_currentRoom->roomPos().y));
+                newPos = RoomPos(m_currentRoom->roomPos().x + 1, m_currentRoom->roomPos().y);
                 break;
         }
 
+        addRandomRoom(newPos);
+        m_currentRoom = room(newPos);
+
         dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
+        // Flush and end the current line
+        String().writeToConsole();
         setMenu(Menu::Main);
     }
 
     switch (key) {
         case KEY_1:
             _m__moveToRoomRel = 1;
-            break;
+            goto finally;
         case KEY_2:
             _m__moveToRoomRel = 2;
-            break;
+            goto finally;
         case KEY_3:
             _m__moveToRoomRel = 3;
-            break;
+            goto finally;
         case KEY_4:
             _m__moveToRoomRel = 4;
+            goto finally;
+        finally:
+            String().append("\033[1D").append(_m__moveToRoomRel).writeToConsole(false);
+            break;
+        default:
+            break;
+    }
+}
+
+void Game::handleInventoryMenu(const int& key)
+{
+    switch (key) {
+        case KEY_u:
+            // switch to item selection menu
             break;
         default:
             break;

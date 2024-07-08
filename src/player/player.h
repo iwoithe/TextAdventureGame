@@ -42,6 +42,9 @@ public:
     void moveRoom(Direction dir);
 
     void addItemToInventory(IItem* item);
+
+    void displayInventory();
+    void displayStats() const;
 private:
     PlayerData m_playerData;
 

@@ -126,10 +126,15 @@ public:
 
     void setMenu(Menu menu);
 
+    void gameIntro() const;
+    void displayMoveRoomMenuInstructions() const;
+    void displayInventoryInstructions();
+
     void handleInput();
     void handleQuit(const int& key);
-    void mainMenu(const int& key);
-    void moveRoomMenu(const int& key);
+    void handleMainMenu(const int& key);
+    void handleMoveRoomMenu(const int& key);
+    void handleInventoryMenu(const int& key);
 
     bool isRunning() const;
     void run();
