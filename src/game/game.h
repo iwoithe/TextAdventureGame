@@ -125,7 +125,8 @@ public:
     async::Channel<Menu> currentMenuChanged();
 
     void handleInput();
-
+    void handleQuit(const int& key);
+    void mainMenu(const int& key);
     void moveRoomMenu(const int& key);
 
     async::Channel<Direction> playerMoveRoomRequested();

@@ -107,36 +107,11 @@ void Game::handleInput()
 {
     if (kbhit()) {
         int key = getch();
-        if (key == KEY_ESCAPE) {
-            switch (m_currentMenu) {
-                case Menu::Main:
-                    m_isRunning = false;
-                    break;
-                case Menu::MoveRoom:
-                case Menu::Inventory:
-                case Menu::Spellbook:
-                    m_currentMenu = Menu::Main;
-                    m_currentMenuChanged.send(m_currentMenu);
-                    break;
-            }
-        }
+        handleQuit(key);
 
         switch (m_currentMenu) {
             case Menu::Main:
-                switch (key) {
-                    case KEY_m:
-                        m_currentMenu = Menu::MoveRoom;
-                        m_currentMenuChanged.send(m_currentMenu);
-                        break;
-                    case KEY_i:
-                        m_currentMenu = Menu::Inventory;
-                        m_currentMenuChanged.send(m_currentMenu);
-                    case KEY_s:
-                        m_currentMenu = Menu::Spellbook;
-                        m_currentMenuChanged.send(m_currentMenu);
-                    default:
-                        break;
-                }
+                mainMenu(key);
                 break;
             case Menu::MoveRoom:
                 moveRoomMenu(key);
@@ -146,6 +121,41 @@ void Game::handleInput()
             case Menu::Spellbook:
                 break;
         }
+    }
+}
+
+void Game::handleQuit(const int& key)
+{
+    if (key == KEY_ESCAPE) {
+        switch (m_currentMenu) {
+            case Menu::Main:
+                m_isRunning = false;
+                break;
+            case Menu::MoveRoom:
+            case Menu::Inventory:
+            case Menu::Spellbook:
+                m_currentMenu = Menu::Main;
+                m_currentMenuChanged.send(m_currentMenu);
+                break;
+        }
+    }
+}
+
+void Game::mainMenu(const int& key)
+{
+    switch (key) {
+        case KEY_m:
+            m_currentMenu = Menu::MoveRoom;
+            m_currentMenuChanged.send(m_currentMenu);
+            break;
+        case KEY_i:
+            m_currentMenu = Menu::Inventory;
+            m_currentMenuChanged.send(m_currentMenu);
+        case KEY_s:
+            m_currentMenu = Menu::Spellbook;
+            m_currentMenuChanged.send(m_currentMenu);
+        default:
+            break;
     }
 }
 
