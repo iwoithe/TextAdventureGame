@@ -112,6 +112,8 @@ public:
     Game();
     ~Game();
 
+    void init();
+
     void addGameObject(IGameObject* gameObject);
     void initGameObjects();
 
@@ -127,6 +129,7 @@ public:
     void setMenu(Menu menu);
 
     void gameIntro() const;
+    void displayMenuIntro(Menu menu);
     void displayMoveRoomMenuInstructions() const;
     void displayInventoryInstructions();
 

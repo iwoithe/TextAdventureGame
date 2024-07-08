@@ -24,48 +24,7 @@ Game::Game()
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = room(RoomPos(0, 0));
 
-    m_currentMenuChanged.onReceive(nullptr, [&](Menu menu) {
-        String menuTitleText;
-        menuTitleText.appendColor(Color::Green, ColorLayer::Foreground);
-        switch (menu) {
-            case Menu::Main:
-                menuTitleText.append("[Main Menu]");
-                break;
-            case Menu::MoveRoom:
-                menuTitleText.append("[Move Room Menu]");
-                break;
-            case Menu::Inventory:
-                menuTitleText.append("[Inventory Menu]");
-                break;
-            case Menu::Spellbook:
-                menuTitleText.append("[Spellbook Menu]");
-                break;
-            default:
-                break;
-        }
-
-        // Insert blank line between title text
-        String().writeToConsole();
-        menuTitleText.appendColor(Color::Default, ColorLayer::Foreground);
-        menuTitleText.writeToConsole();
-
-        // Contextual text/instructions
-        switch (menu) {
-            case Menu::Main:
-                dispatcher()->dispatch("player-display-stats", Parameters());
-                break;
-            case Menu::MoveRoom:
-                displayMoveRoomMenuInstructions();
-                break;
-            case Menu::Inventory:
-                displayInventoryInstructions();
-                break;
-            case Menu::Spellbook:
-                break;
-            default:
-                break;
-        }
-    });
+    init();
 
     gameIntro();
     setMenu(Menu::Main);
@@ -80,6 +39,13 @@ Game::~Game()
     DEL_PTR_S(m_currentRoom);
     DEL_STD_VEC(m_gameObjects);
     DEL_STD_VEC(m_rooms);
+}
+
+void Game::init()
+{
+    m_currentMenuChanged.onReceive(nullptr, [&](Menu menu) {
+        displayMenuIntro(menu);
+    });
 }
 
 void Game::addGameObject(IGameObject* gameObject)
@@ -154,6 +120,50 @@ void Game::gameIntro() const
     String("Press [i] to enter the inventory menu").writeToConsole();
     String("Press [u] to use an item (only works in the inventory menu)").writeToConsole();
     String("Press [s] to enter the spellbook menu").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
+}
+
+void Game::displayMenuIntro(Menu menu)
+{
+    String menuTitleText;
+    menuTitleText.appendColor(Color::Green, ColorLayer::Foreground);
+    switch (menu) {
+        case Menu::Main:
+            menuTitleText.append("[Main Menu]");
+            break;
+        case Menu::MoveRoom:
+            menuTitleText.append("[Move Room Menu]");
+            break;
+        case Menu::Inventory:
+            menuTitleText.append("[Inventory Menu]");
+            break;
+        case Menu::Spellbook:
+            menuTitleText.append("[Spellbook Menu]");
+            break;
+        default:
+            break;
+    }
+
+    // Insert blank line between title text
+    String().writeToConsole();
+    menuTitleText.appendColor(Color::Default, ColorLayer::Foreground);
+    menuTitleText.writeToConsole();
+
+    // Contextual text/instructions
+    switch (menu) {
+        case Menu::Main:
+            dispatcher()->dispatch("player-display-stats", Parameters());
+            break;
+        case Menu::MoveRoom:
+            displayMoveRoomMenuInstructions();
+            break;
+        case Menu::Inventory:
+            displayInventoryInstructions();
+            break;
+        case Menu::Spellbook:
+            break;
+        default:
+            break;
+    }
 }
 
 void Game::displayMoveRoomMenuInstructions() const
