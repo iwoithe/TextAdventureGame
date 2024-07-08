@@ -42,11 +42,11 @@ Game::Game()
 
 Game::~Game()
 {
-    delete m_currentRoom;
     for (IGameObject* gameObject : m_gameObjects) {
         gameObject->deInit();
     }
 
+    DEL_PTR_S(m_currentRoom);
     DEL_STD_VEC(m_gameObjects);
     DEL_STD_VEC(m_rooms);
 }
@@ -101,35 +101,6 @@ Menu Game::currentMenu() const
 async::Channel<Menu> Game::currentMenuChanged()
 {
     return m_currentMenuChanged;
-}
-
-Any Game::getInput(InputMode inputMode)
-{
-    return getInput(inputMode, true);
-}
-
-Any Game::getInput(InputMode inputMode, bool print)
-{
-    switch (inputMode) {
-        case InputMode::None:
-            return Any(String(""));
-        case InputMode::Str:
-            return Any(String(""));
-        case InputMode::Character:
-            if (print) {
-                String("Enter a character:  ").writeToConsole(false);
-            }
-
-            int keyboardCode = 0;
-
-            while (keyboardCode != KEY_ENTER) {
-                keyboardCode = getch();
-            }
-
-            return Any(keyboardCode);
-    }
-
-    return Any();
 }
 
 void Game::handleInput()

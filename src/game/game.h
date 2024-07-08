@@ -124,8 +124,6 @@ public:
     Menu currentMenu() const;
     async::Channel<Menu> currentMenuChanged();
 
-    Any getInput(InputMode inputMode);
-    Any getInput(InputMode inputMode, bool print);
     void handleInput();
 
     void moveRoomMenu(const int& key);
