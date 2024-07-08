@@ -129,8 +129,6 @@ public:
     void mainMenu(const int& key);
     void moveRoomMenu(const int& key);
 
-    async::Channel<Direction> playerMoveRoomRequested();
-
     bool isRunning() const;
     void run();
 
@@ -139,8 +137,6 @@ private:
 
     Menu m_currentMenu;
     async::Channel<Menu> m_currentMenuChanged;
-
-    async::Channel<Direction> m_playerMoveRoomRequested;
 
     bool m_isRunning;
     std::vector<Room*> m_rooms;

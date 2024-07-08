@@ -186,10 +186,9 @@ void Game::moveRoomMenu(const int& key)
                 break;
         }
 
-        m_playerMoveRoomRequested.send(dir);
         dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
-        m_currentMenu = Menu::Main;
 
+        m_currentMenu = Menu::Main;
         m_currentMenuChanged.send(m_currentMenu);
     }
 
@@ -209,11 +208,6 @@ void Game::moveRoomMenu(const int& key)
         default:
             break;
     }
-}
-
-async::Channel<Direction> Game::playerMoveRoomRequested()
-{
-    return m_playerMoveRoomRequested;
 }
 
 bool Game::isRunning() const
