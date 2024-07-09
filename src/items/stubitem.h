@@ -6,7 +6,7 @@
 class StubItem : public IItem
 {
 public:
-    StubItem() {};
+    StubItem() { m_name = "Stub Item"; m_description = "A stub item"; };
     ~StubItem() {};
     const String& name() const override { return m_name; };
     const String& description() const override { return m_description; };
