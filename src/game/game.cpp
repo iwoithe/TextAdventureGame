@@ -23,7 +23,7 @@ Game::Game()
     m_isRunning = false;
     m_rooms = {};
     addRoom("Lobby", nullptr, RoomPos(0, 0));
-    m_currentRoom = room(RoomPos(0, 0));
+    m_currentRoom = findRoom(RoomPos(0, 0));
     m_playerInventorySize = 0;
 
     init();
@@ -76,8 +76,6 @@ void Game::addRoom(Room* r)
 
 void Game::addRoom(const String& description, IItem* item, const RoomPos& roomPos)
 {
-    dispatcher()->dispatch("player-add-item-to-inventory", Parameters({ Any(item) }));
-
     Room* r = new Room(description, item, roomPos);
     m_rooms.push_back(r);
 }
@@ -87,7 +85,7 @@ void Game::addRandomRoom(const RoomPos& roomPos)
     addRoom("Hello", getRandomItem(), roomPos);
 }
 
-Room* Game::room(const RoomPos& roomPos)
+Room* Game::findRoom(const RoomPos& roomPos)
 {
     // Get the room at position roomPos
     for (Room* r : m_rooms) {
@@ -280,10 +278,14 @@ void Game::handleMoveRoomMenu(const int& key)
                 break;
         }
 
-        addRandomRoom(newPos);
-        m_currentRoom = room(newPos);
+        Room* r = findRoom(newPos);
+        if (r == nullptr) {
+            addRandomRoom(newPos);
+            m_currentRoom = findRoom(newPos);
+        } else {
+            m_currentRoom = r;
+        }
 
-        dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
         // Flush and end the current line
         String().writeToConsole();
         if (m_currentRoom->isEmpty()) {
@@ -291,6 +293,13 @@ void Game::handleMoveRoomMenu(const int& key)
         } else {
             String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") has item ").append(m_currentRoom->item()->name()).writeToConsole();
         }
+
+        dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
+        if (m_currentRoom) {
+            dispatcher()->dispatch("player-add-item-to-inventory", Parameters({ Any(m_currentRoom->item()) }));
+            m_currentRoom->removeItem();
+        }
+
         setMenu(Menu::Main);
     }
 

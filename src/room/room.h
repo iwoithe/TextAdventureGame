@@ -24,6 +24,7 @@ public:
 
     IItem* item() const;
     const bool isEmpty() const;
+    void removeItem();
 
     const RoomPos& roomPos() const;
     void setRoomPos(const RoomPos& roomPos);

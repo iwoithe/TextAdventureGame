@@ -115,7 +115,7 @@ public:
     void addRoom(Room* r);
     void addRoom(const String& description, IItem* item, const RoomPos& roomPos);
     void addRandomRoom(const RoomPos& roomPos);
-    Room* room(const RoomPos& roomPos);
+    Room* findRoom(const RoomPos& roomPos);
 
 
     Menu currentMenu() const;

@@ -54,6 +54,14 @@ const bool Room::isEmpty() const
     return (m_item == nullptr);
 }
 
+void Room::removeItem()
+{
+    // Basically when the item is picked up by the player
+    // Don't delete the pointer, ownership transferred to the player class
+    // But this does mean be careful using this method as it doesn't delete the pointer
+    m_item = nullptr;
+}
+
 const RoomPos& Room::roomPos() const
 {
     return m_pos;
