@@ -1,17 +1,17 @@
-#ifndef ITEMS_APPLEITEM_H
-#define ITEMS_APPLEITEM_H
+#ifndef ITEMS_BREADITEM_H
+#define ITEMS_BREADITEM_H
 
 #include "iitem.h"
 
 #include "dispatcher/dispatcher.h"
 #include "singleton/singletonmanager.h"
 
-class AppleItem : public IItem
+class BreadItem : public IItem
 {
     INJECT_SINGLETON_ALIAS(dispatcher, dispatcher, Dispatcher)
 public:
-    AppleItem();
-    ~AppleItem() = default;
+    BreadItem();
+    ~BreadItem() = default;
     const String& name() const override;
     const String& description() const override;
     void use() override;
@@ -21,4 +21,4 @@ private:
     int m_healAmount;
 };
 
-#endif // ITEMS_APPLEITEM_H
+#endif //ITEMS_BREADITEM_H

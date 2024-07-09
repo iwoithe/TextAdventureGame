@@ -5,11 +5,10 @@
 
 #include "iitem.h"
 
-#include "appleitem.h"
-
-#define ITEM_TYPES_LENGTH 1
+#define ITEM_TYPES_LENGTH 2
 enum ItemTypes {
-    Apple
+    Apple,
+    Bread
 };
 
 IItem* getRandomItem();
