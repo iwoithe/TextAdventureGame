@@ -312,7 +312,7 @@ void Game::handleMoveRoomMenu(const int& key)
 
 void Game::handleInventoryMenu(const int& key)
 {
-    if (key == KEY_ENTER) {
+    if (key == KEY_ENTER && _m__himNum > 0 && _m__himNum <= m_playerInventorySize) {
         // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
         String().writeToConsole();
         dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
