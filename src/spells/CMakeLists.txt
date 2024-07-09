@@ -4,6 +4,8 @@ set(MODULE_SRC
     ispell.h
     killspell.cpp
     killspell.h
+    spells.cpp
+    spells.h
 )
 
 set(MODULE_LINK

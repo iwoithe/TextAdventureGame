@@ -14,8 +14,6 @@
 #include "items/items.h"
 #include "player/player.h"
 
-#include "spells/killspell.h"
-
 Game::Game()
 {
     srand(time(0));
@@ -70,8 +68,6 @@ void Game::initGameObjects()
     player->spellSizeChanged().onReceive(nullptr, [&](int newSize) {
         m_playerSpellsSize = newSize;
     });
-
-    player->addSpell(new KillSpell());
 
     addGameObject(player);
 

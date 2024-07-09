@@ -6,6 +6,8 @@
 #include "global/delete.h"
 #include "global/log.h"
 
+#include "spells/spells.h"
+
 std::ostream& operator<<(std::ostream& os, const PlayerData& playerData) {
     os << "currentRoom: (" << playerData.currentRoom.x << ", " << playerData.currentRoom.y << ")" << std::endl;
     os << "health: " << playerData.health << std::endl;
@@ -62,6 +64,10 @@ void Player::init()
 
     dispatcher()->reg("player-move-room", [&](Parameters params) {
         moveRoom(params[0].get<Direction>());
+    });
+
+    dispatcher()->reg("player-gain-random-spell", [&](Parameters params) {
+        gainRandomSpell();
     });
 }
 
@@ -225,4 +231,10 @@ void Player::listSpells() const
         spellStr.appendColor(Color::Default, ColorLayer::Foreground);
         spellStr.writeToConsole();
     }
+}
+
+void Player::gainRandomSpell()
+{
+    ISpell* newSpell = getRandomSpell();
+    addSpell(newSpell);
 }

@@ -68,6 +68,8 @@ public:
     void castSpell(int index);
     int findSpellByName(const String& name);
     void listSpells() const;
+
+    void gainRandomSpell();
 private:
     PlayerData m_playerData;
 

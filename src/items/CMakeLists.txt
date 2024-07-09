@@ -9,6 +9,8 @@ set(MODULE_SRC
     items.h
     lavabucketitem.cpp
     lavabucketitem.h
+    spellpotionitem.cpp
+    spellpotionitem.h
     stubitem.cpp
     stubitem.h
 )
