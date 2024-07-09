@@ -94,7 +94,8 @@ enum Menu {
     Main,
     MoveRoom,
     Inventory,
-    SpellMenu
+    SpellMenu,
+    ListMenu
 };
 
 using namespace app;
@@ -117,7 +118,6 @@ public:
     void addRandomRoom(const RoomPos& roomPos);
     Room* findRoom(const RoomPos& roomPos);
 
-
     Menu currentMenu() const;
     async::Channel<Menu> currentMenuChanged();
 
@@ -128,6 +128,10 @@ public:
     void displayMoveRoomMenuInstructions() const;
     void displayInventoryInstructions();
     void displaySpellMenuInstructions();
+    void displayListMenuInstructions() const;
+
+    void loadAvailableItems();
+    void loadAvailableSpells();
 
     void handleInput();
     void handleQuit(const int& key);
@@ -135,6 +139,7 @@ public:
     void handleMoveRoomMenu(const int& key);
     void handleInventoryMenu(const int& key);
     void handleSpellMenu(const int& key);
+    void handleListMenu(const int& key);
 
     bool isRunning() const;
     void run();
@@ -157,9 +162,16 @@ private:
     int _m__himNum = 0;
     // handleSpellMenu inputted number
     int _m__hsmNum = 0;
+    // handleListMenu inputted string
+    String _m__hlmStr = "";
 
     int m_playerInventorySize;
     int m_playerSpellsSize;
+
+    std::vector<String> m_availableItemsNames;
+    std::vector<String> m_availableItemsDescriptions;
+    std::vector<String> m_availableSpellsNames;
+    std::vector<String> m_availableSpellsDescription;
 };
 
 #endif // GAME_H

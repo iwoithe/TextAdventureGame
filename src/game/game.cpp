@@ -6,13 +6,26 @@
 
 #include "async/processevents.h"
 
+#include "global/algorithms.h"
 #include "global/delete.h"
-#include "dispatcher/dispatcher.h"
 #include "global/ints.h"
 #include "global/log.h"
 
+#include "dispatcher/dispatcher.h"
+
+#include "items/appleitem.h"
+#include "items/breaditem.h"
+#include "items/iitem.h"
 #include "items/items.h"
+#include "items/lavabucketitem.h"
+#include "items/spellpotionitem.h"
+#include "items/stubitem.h"
+
 #include "player/player.h"
+
+#include "spells/ispell.h"
+#include "spells/killspell.h"
+#include "spells/spells.h"
 
 Game::Game()
 {
@@ -20,6 +33,9 @@ Game::Game()
 
     m_playerInventorySize = 0;
     m_playerSpellsSize = 0;
+
+    loadAvailableItems();
+    loadAvailableSpells();
 
     initGameObjects();
 
@@ -131,8 +147,8 @@ void Game::gameIntro() const
     String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [Esc] or [q] to go back a menu/quit if in main menu").writeToConsole();
     String("Press [m] to enter the move menu").writeToConsole();
     String("Press [i] to enter the inventory menu").writeToConsole();
-    String("Press [u] to use an item (only works in the inventory menu)").writeToConsole();
-    String("Press [s] to enter the spellbook menu").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
+    String("Press [s] to enter the spellbook menu").writeToConsole();
+    String("Press [l] to enter the list menu (view all available items and spells)").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
 }
 
 void Game::displayMenuIntro(Menu menu)
@@ -155,6 +171,9 @@ void Game::displayMenuIntro(Menu menu)
         case Menu::SpellMenu:
             menuTitleText.append("[Spell Menu]");
             break;
+        case Menu::ListMenu:
+            menuTitleText.append("[List Menu]");
+            break;
         default:
             break;
     }
@@ -175,6 +194,9 @@ void Game::displayMenuIntro(Menu menu)
             break;
         case Menu::SpellMenu:
             displaySpellMenuInstructions();
+            break;
+        case Menu::ListMenu:
+            displayListMenuInstructions();
             break;
         default:
             break;
@@ -210,6 +232,78 @@ void Game::displaySpellMenuInstructions()
     String("Enter spell number:  ").writeToConsole(false);
 }
 
+void Game::displayListMenuInstructions() const
+{
+    String infoText;
+    infoText.append("Listing all available items and spells\n");
+    infoText.append("Items:\n");
+
+    for (const String& itemName : m_availableItemsNames) {
+        infoText.append("- ").append(itemName).append("\n");
+    }
+
+    infoText.append("\nSpells:\n");
+
+    for (const String& spellName : m_availableSpellsNames) {
+        infoText.append("- ").append(spellName).append("\n");
+    }
+
+    infoText.append("\nType the name of the spell and hit [Enter] to find out more\nNote: searching is case-sensitive\n");
+    infoText.append("Press [Esc] or [q] to go back to [Main Menu]");
+    infoText.writeToConsole();
+}
+
+void Game::loadAvailableItems()
+{
+    IItem* item;
+    for (int i = 0; i < ITEM_TYPE_LENGTH; i++) {
+        switch (i) {
+            case ItemType::Apple:
+                item = new AppleItem();
+                goto appendItemName;
+            case ItemType::Bread:
+                item = new BreadItem();
+                goto appendItemName;
+            case ItemType::LavaBucket:
+                item = new LavaBucketItem();
+                goto appendItemName;
+            case ItemType::SpellPotion:
+                item = new SpellPotionItem();
+                goto appendItemName;
+            case ItemType::None:
+                break;
+            appendItemName:
+                m_availableItemsNames.push_back(item->name());
+                m_availableItemsDescriptions.push_back(item->description());
+                delete item;
+                break;
+        }
+    }
+
+    std::sort(m_availableItemsNames.begin(), m_availableItemsNames.end(), [=](const String& a, const String& b) {return a < b;});
+    std::sort(m_availableItemsDescriptions.begin(), m_availableItemsDescriptions.end(), [=](const String& a, const String& b) {return a < b;});
+}
+
+void Game::loadAvailableSpells()
+{
+    ISpell* spell;
+    for (int i = 0; i < SPELL_TYPE_LENGTH; i++) {
+        switch (i) {
+            case SpellType::Kill:
+                spell = new KillSpell();
+                goto appendSpellName;
+            appendSpellName:
+                m_availableSpellsNames.push_back(spell->name());
+                m_availableSpellsDescription.push_back(spell->description());
+                delete spell;
+                break;
+        }
+    }
+
+    std::sort(m_availableSpellsNames.begin(), m_availableSpellsNames.end(), [=](const String& a, const String& b) {return a < b;});
+    std::sort(m_availableSpellsDescription.begin(), m_availableSpellsDescription.end(), [=](const String& a, const String& b) {return a < b;});
+}
+
 void Game::handleInput()
 {
     if (kbhit()) {
@@ -229,6 +323,8 @@ void Game::handleInput()
             case Menu::SpellMenu:
                 handleSpellMenu(key);
                 break;
+            case Menu::ListMenu:
+                handleListMenu(key);
         }
     }
 }
@@ -243,6 +339,7 @@ void Game::handleQuit(const int& key)
             case Menu::MoveRoom:
             case Menu::Inventory:
             case Menu::SpellMenu:
+            case Menu::ListMenu:
                 setMenu(Menu::Main);
                 break;
         }
@@ -260,6 +357,8 @@ void Game::handleMainMenu(const int& key)
             break;
         case KEY_s:
             setMenu(Menu::SpellMenu);
+        case KEY_l:
+            setMenu(Menu::ListMenu);
         default:
             break;
     }
@@ -455,6 +554,35 @@ void Game::handleSpellMenu(const int& key)
         default:
             break;
     }
+}
+
+void Game::handleListMenu(const int& key)
+{
+    String("> ").writeToConsole(false);
+    _m__hlmStr.readFromConsole();
+    int itemIndex = binarySearch(m_availableItemsNames, _m__hlmStr);
+
+    if (itemIndex != -1) {
+        String text;
+        text.append(m_availableItemsNames[itemIndex]);
+        text.append(": ");
+        text.append(m_availableItemsDescriptions[itemIndex]);
+        text.writeToConsole();
+        return;
+    }
+
+    int spellIndex = binarySearch(m_availableSpellsNames, _m__hlmStr);
+
+    if (spellIndex != -1) {
+        String text;
+        text.append(m_availableSpellsNames[spellIndex]);
+        text.append(": ");
+        text.append(m_availableSpellsDescription[spellIndex]);
+        text.writeToConsole();
+        return;
+    }
+
+    String("Item or spell \"").append(_m__hlmStr).append("\" could not be found and probably doesn't exist").writeToConsole();
 }
 
 bool Game::isRunning() const
