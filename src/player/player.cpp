@@ -131,6 +131,7 @@ void Player::useInventoryItem(const int& index)
     }
 
     item.item->use();
+    delete item.item;
     m_inventory.erase(m_inventory.begin() + index);
     m_inventorySizeChanged.send(m_inventory.size());
 }
