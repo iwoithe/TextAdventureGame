@@ -325,6 +325,7 @@ void Game::handleInput()
                 break;
             case Menu::ListMenu:
                 handleListMenu(key);
+                break;
         }
     }
 }
@@ -357,8 +358,10 @@ void Game::handleMainMenu(const int& key)
             break;
         case KEY_s:
             setMenu(Menu::SpellMenu);
+            break;
         case KEY_l:
             setMenu(Menu::ListMenu);
+            break;
         default:
             break;
     }
