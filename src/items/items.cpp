@@ -5,15 +5,11 @@
 
 #include <cstdlib>
 
-#include "iwstring.h"
-
 IItem* getRandomItem()
 {
     int lowerLimit = 0;
     int upperLimit = ITEM_TYPES_LENGTH;
     int randInt = rand() % (upperLimit - lowerLimit) + lowerLimit;
-
-    String("getRandomItem(): ").append(randInt).writeToConsole();
 
     switch (randInt) {
         case Apple:
