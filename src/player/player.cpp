@@ -58,12 +58,12 @@ void Player::deInit() {}
 
 void Player::heal(const int& amount)
 {
-    if (m_playerData.health + amount > m_playerData.maxHealth) {
+    m_playerData.health += amount;
+    if (m_playerData.health > m_playerData.maxHealth) {
         // Clamp health to maximum health
         m_playerData.health = m_playerData.maxHealth;
     }
 
-    m_playerData.health += amount;
     String("Health: ").append(m_playerData.health).writeToConsole();
 }
 
