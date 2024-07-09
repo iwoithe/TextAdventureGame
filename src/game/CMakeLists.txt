@@ -9,6 +9,8 @@ set(MODULE_LINK
     items
     player
     room
+    singleton
+    spells
 )
 
 setup_module()

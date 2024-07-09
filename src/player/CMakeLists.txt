@@ -7,6 +7,7 @@ set(MODULE_SRC
 set(MODULE_LINK
     dispatcher
     items
+    spells
 )
 
 setup_module()

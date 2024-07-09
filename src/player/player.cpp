@@ -2,6 +2,7 @@
 
 #include "iwstring.h"
 
+#include "global/algorithms.h"
 #include "global/delete.h"
 #include "global/log.h"
 
@@ -25,12 +26,22 @@ Player::~Player()
     for (InventoryItem item : m_inventory) {
         DEL_PTR_S(item.item);
     }
+
+    DEL_STD_VEC(m_spells);
 }
 
 void Player::init()
 {
     dispatcher()->reg("player-add-item-to-inventory", [&](Parameters params) {
         addItemToInventory(params[0].get<IItem*>());
+    });
+
+    dispatcher()->reg("player-list-spells", [&](Parameters params) {
+        listSpells();
+    });
+
+    dispatcher()->reg("player-cast-spell", [&](Parameters params) {
+        castSpell(params[0].get<int>());
     });
 
     dispatcher()->reg("player-list-inventory", [&](Parameters params) {
@@ -146,6 +157,16 @@ async::Channel<int> Player::inventorySizeChanged()
     return m_inventorySizeChanged;
 }
 
+int Player::spellSize() const
+{
+    return m_spells.size();
+}
+
+async::Channel<int> Player::spellSizeChanged()
+{
+    return m_spellSizeChanged;
+}
+
 InventoryItem Player::inventoryItemFromIndex(const int& index)
 {
     if (index < 0 || index >= m_inventory.size()) {
@@ -164,4 +185,45 @@ InventoryItem Player::inventoryItemFromId(const int& id)
     }
 
     return InventoryItem();
+}
+
+void Player::addSpell(ISpell* spell)
+{
+    if (spell == nullptr) {
+        return;
+    }
+
+    m_spells.push_back(spell);
+    m_spellSizeChanged.send(m_spells.size());
+    String("m_spells.size(): ").append(m_spells.size()).writeToConsole();
+}
+
+int Player::findSpellByName(const String& name)
+{
+    return binarySearch<ISpell*, String>(m_spells, name);
+}
+
+void Player::castSpell(int index)
+{
+    if (index < 0 || index >= m_spells.size()) {
+        return;
+    }
+
+    m_spells[index]->cast();
+}
+
+void Player::listSpells() const
+{
+    for (int i = 0; i < m_spells.size(); i++) {
+        String spellStr;
+        spellStr.appendColor(Color::Blue, ColorLayer::Foreground);
+        spellStr.append(i + 1);
+        spellStr.append(":");
+        spellStr.appendColor(Color::Default, ColorLayer::Foreground);
+        spellStr.append(" ").append(m_spells[i]->name()).append(" ");
+        spellStr.appendColor(Color::Yellow, ColorLayer::Foreground);
+        spellStr.append(m_spells[i]->description());
+        spellStr.appendColor(Color::Default, ColorLayer::Foreground);
+        spellStr.writeToConsole();
+    }
 }

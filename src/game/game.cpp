@@ -14,9 +14,14 @@
 #include "items/items.h"
 #include "player/player.h"
 
+#include "spells/killspell.h"
+
 Game::Game()
 {
     srand(time(0));
+
+    m_playerInventorySize = 0;
+    m_playerSpellsSize = 0;
 
     initGameObjects();
 
@@ -24,7 +29,6 @@ Game::Game()
     m_rooms = {};
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = findRoom(RoomPos(0, 0));
-    m_playerInventorySize = 0;
 
     init();
 
@@ -58,9 +62,16 @@ void Game::addGameObject(IGameObject* gameObject)
 void Game::initGameObjects()
 {
     Player* player = new Player();
+
     player->inventorySizeChanged().onReceive(nullptr, [&](int newSize) {
         m_playerInventorySize = newSize;
     });
+
+    player->spellSizeChanged().onReceive(nullptr, [&](int newSize) {
+        m_playerSpellsSize = newSize;
+    });
+
+    player->addSpell(new KillSpell());
 
     addGameObject(player);
 
@@ -145,8 +156,8 @@ void Game::displayMenuIntro(Menu menu)
         case Menu::Inventory:
             menuTitleText.append("[Inventory Menu]");
             break;
-        case Menu::Spellbook:
-            menuTitleText.append("[Spellbook Menu]");
+        case Menu::SpellMenu:
+            menuTitleText.append("[Spell Menu]");
             break;
         default:
             break;
@@ -166,7 +177,8 @@ void Game::displayMenuIntro(Menu menu)
         case Menu::Inventory:
             displayInventoryInstructions();
             break;
-        case Menu::Spellbook:
+        case Menu::SpellMenu:
+            displaySpellMenuInstructions();
             break;
         default:
             break;
@@ -196,6 +208,12 @@ void Game::displayInventoryInstructions()
     String("Enter item number:  ").writeToConsole(false);
 }
 
+void Game::displaySpellMenuInstructions()
+{
+    dispatcher()->dispatch("player-list-spells", Parameters());
+    String("Enter spell number:  ").writeToConsole(false);
+}
+
 void Game::handleInput()
 {
     if (kbhit()) {
@@ -212,7 +230,8 @@ void Game::handleInput()
             case Menu::Inventory:
                 handleInventoryMenu(key);
                 break;
-            case Menu::Spellbook:
+            case Menu::SpellMenu:
+                handleSpellMenu(key);
                 break;
         }
     }
@@ -227,7 +246,7 @@ void Game::handleQuit(const int& key)
                 break;
             case Menu::MoveRoom:
             case Menu::Inventory:
-            case Menu::Spellbook:
+            case Menu::SpellMenu:
                 setMenu(Menu::Main);
                 break;
         }
@@ -244,7 +263,7 @@ void Game::handleMainMenu(const int& key)
             setMenu(Menu::Inventory);
             break;
         case KEY_s:
-            setMenu(Menu::Spellbook);
+            setMenu(Menu::SpellMenu);
         default:
             break;
     }
@@ -327,12 +346,13 @@ void Game::handleMoveRoomMenu(const int& key)
 void Game::handleInventoryMenu(const int& key)
 {
     if (key == KEY_ENTER && _m__himNum > 0 && _m__himNum <= m_playerInventorySize) {
-        // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
+        // Flush and end the current line
         String().writeToConsole();
+        
+        // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
         dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
 
         _m__himNum = 0;
-        // Flush and end the current line
         setMenu(Menu::Main);
     }
 
@@ -376,6 +396,66 @@ void Game::handleInventoryMenu(const int& key)
         finally:
             // numDigitsInNum(_m__himNum) - 1 as _m__himNum now has one more digit than is outputted
             String("\033[").append(numDigitsInNum(_m__himNum) - 1).append("D\033[0K").append(_m__himNum).writeToConsole(false);
+            break;
+        default:
+            break;
+    }
+}
+
+void Game::handleSpellMenu(const int& key)
+{
+    if (key == KEY_ENTER && _m__hsmNum > 0 && _m__hsmNum <= m_playerSpellsSize) {
+        // Flush and end the current line
+        String().writeToConsole();
+
+        // _m__himNum - 1 as Player::castSpell uses 0-index, but items listed out as index + 1
+        dispatcher()->dispatch("player-cast-spell", Parameters({ Any(_m__hsmNum - 1) }));
+
+        _m__hsmNum = 0;
+        setMenu(Menu::Main);
+    }
+
+    if (key == KEY_BACKSPACE) {
+        String("\033[").append(numDigitsInNum(_m__hsmNum)).append("D\033[0K").writeToConsole(false);
+        _m__hsmNum /= 10;
+        String(_m__hsmNum).writeToConsole(false);
+    }
+
+    switch (key) {
+        case KEY_0:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 0);
+            goto finally;
+        case KEY_1:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 1);
+            goto finally;
+        case KEY_2:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 2);
+            goto finally;
+        case KEY_3:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 3);
+            goto finally;
+        case KEY_4:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 4);
+            goto finally;
+        case KEY_5:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 5);
+            goto finally;
+        case KEY_6:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 6);
+            goto finally;
+        case KEY_7:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 7);
+            goto finally;
+        case KEY_8:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 8);
+            goto finally;
+        case KEY_9:
+            _m__hsmNum = concatenateInts(_m__hsmNum, 9);
+            goto finally;
+        finally:
+            // numDigitsInNum(_m__himNum) - 1 as _m__himNum now has one more digit than is outputted
+            String("\033[").append(numDigitsInNum(_m__hsmNum) - 1).append("D\033[0K").append(_m__hsmNum).writeToConsole(false);
+            break;
         default:
             break;
     }

@@ -94,7 +94,7 @@ enum Menu {
     Main,
     MoveRoom,
     Inventory,
-    Spellbook
+    SpellMenu
 };
 
 using namespace app;
@@ -127,12 +127,14 @@ public:
     void displayMenuIntro(Menu menu);
     void displayMoveRoomMenuInstructions() const;
     void displayInventoryInstructions();
+    void displaySpellMenuInstructions();
 
     void handleInput();
     void handleQuit(const int& key);
     void handleMainMenu(const int& key);
     void handleMoveRoomMenu(const int& key);
     void handleInventoryMenu(const int& key);
+    void handleSpellMenu(const int& key);
 
     bool isRunning() const;
     void run();
@@ -153,8 +155,11 @@ private:
 
     // handleInventoryMenu inputted number
     int _m__himNum = 0;
+    // handleSpellMenu inputted number
+    int _m__hsmNum = 0;
 
     int m_playerInventorySize;
+    int m_playerSpellsSize;
 };
 
 #endif // GAME_H
