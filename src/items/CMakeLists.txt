@@ -7,6 +7,8 @@ set(MODULE_SRC
     iitem.h
     items.cpp
     items.h
+    lavabucketitem.cpp
+    lavabucketitem.h
     stubitem.cpp
     stubitem.h
 )

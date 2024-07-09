@@ -9,6 +9,7 @@
 enum ItemType {
     Apple,
     Bread,
+    LavaBucket,
     None
 };
 

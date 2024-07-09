@@ -1,6 +1,8 @@
 #include "items.h"
+
 #include "appleitem.h"
 #include "breaditem.h"
+#include "lavabucketitem.h"
 #include "stubitem.h"
 
 #include <cstdlib>
@@ -16,6 +18,8 @@ IItem* getRandomItem()
             return new AppleItem();
         case ItemType::Bread:
             return new BreadItem();
+        case ItemType::LavaBucket:
+            return new LavaBucketItem();
         case ItemType::None:
             return nullptr;
         default:
