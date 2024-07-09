@@ -316,8 +316,7 @@ void Game::handleInventoryMenu(const int& key)
         // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
         String().writeToConsole();
         dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
-        
-        String(_m__himNum).writeToConsole();
+
         _m__himNum = 0;
         // Flush and end the current line
         setMenu(Menu::Main);
