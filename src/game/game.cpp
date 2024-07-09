@@ -286,6 +286,11 @@ void Game::handleMoveRoomMenu(const int& key)
         dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
         // Flush and end the current line
         String().writeToConsole();
+        if (m_currentRoom->isEmpty()) {
+            String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") is empty").writeToConsole();
+        } else {
+            String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") has item ").append(m_currentRoom->item()->name()).writeToConsole();
+        }
         setMenu(Menu::Main);
     }
 

@@ -12,10 +12,12 @@ IItem* getRandomItem()
     int randInt = rand() % (upperLimit - lowerLimit) + lowerLimit;
 
     switch (randInt) {
-        case Apple:
+        case ItemType::Apple:
             return new AppleItem();
-        case Bread:
+        case ItemType::Bread:
             return new BreadItem();
+        case ItemType::None:
+            return nullptr;
         default:
             return new StubItem();
     }

@@ -90,12 +90,6 @@
 #define KEY_y 121
 #define KEY_z 122
 
-enum InputMode {
-    None,
-    Str,
-    Character
-};
-
 enum Menu {
     Main,
     MoveRoom,
