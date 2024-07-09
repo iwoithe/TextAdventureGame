@@ -45,12 +45,12 @@ public:
     String& operator=(const String& other);
     String operator+(const String& other);
     String& operator+=(const String& other);
-    bool operator<(const String& other);
-    bool operator>(const String& other);
+    bool operator<(const String& other) const;
+    bool operator>(const String& other) const;
     char& operator[](const size_t& index);
     const char& operator[](const size_t& index) const;
-    bool operator==(const String& other);
-    bool operator!=(const String& other);
+    bool operator==(const String& other) const;
+    bool operator!=(const String& other) const;
 
     String& append(const double& other);
     String& append(const float& other);
@@ -80,7 +80,7 @@ public:
     void setData(const char* d, bool clearFirst);
     void setData(const String& str, bool clearFirst);
 
-    bool equalTo(const String& other);
+    bool equalTo(const String& other) const;
 
     const size_t find(const String& findStr) const;
     const size_t find(const size_t& startIndex, const String& findStr) const;

@@ -124,7 +124,7 @@ String& String::operator+=(const String& other)
     return *this;
 }
 
-bool String::operator<(const String& other)
+bool String::operator<(const String& other) const
 {
     int res = strcmp(m_data, other.m_data);
 
@@ -135,7 +135,7 @@ bool String::operator<(const String& other)
     }
 }
 
-bool String::operator>(const String& other)
+bool String::operator>(const String& other) const
 {
     int res = strcmp(m_data, other.m_data);
 
@@ -170,12 +170,12 @@ const char& String::operator[](const size_t& index) const
     return m_data[index];
 }
 
-bool String::operator==(const String& other)
+bool String::operator==(const String& other) const
 {
     return equalTo(other);
 }
 
-bool String::operator!=(const String& other)
+bool String::operator!=(const String& other) const
 {
     return !(m_data == other.data());
 }
@@ -338,7 +338,7 @@ const char* String::data() const
     return m_data;
 }
 
-bool String::equalTo(const String& other)
+bool String::equalTo(const String& other) const
 {
     // This data length
     int tDataLen = strlen(m_data);
