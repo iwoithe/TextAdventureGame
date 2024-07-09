@@ -195,7 +195,6 @@ void Player::addSpell(ISpell* spell)
 
     m_spells.push_back(spell);
     m_spellSizeChanged.send(m_spells.size());
-    String("m_spells.size(): ").append(m_spells.size()).writeToConsole();
 }
 
 int Player::findSpellByName(const String& name)
