@@ -4,4 +4,9 @@ set(MODULE_SRC
     singletonmanager.h
 )
 
+set(MODULE_LINK
+    audio
+    dispatcher
+)
+
 setup_module()

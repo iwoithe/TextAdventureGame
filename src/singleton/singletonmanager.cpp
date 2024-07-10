@@ -6,12 +6,14 @@
 
 SingletonManager::SingletonManager()
 {
+    m_audioEngine = new AudioEngine();
     m_dispatcher = new Dispatcher();
     m_instancePtr = nullptr;
 }
 
 SingletonManager::~SingletonManager()
 {
+    DEL_PTR_S(m_audioEngine);
     DEL_PTR_S(m_dispatcher);
 }
 
@@ -24,6 +26,15 @@ SingletonManager* SingletonManager::instance()
     }
 
     return m_instancePtr;
+}
+
+AudioEngine* SingletonManager::audioEngine()
+{
+    if (m_audioEngine == nullptr) {
+        throw std::runtime_error("[CRITICAL ERROR] m_audioEngine is nullptr");
+    }
+
+    return m_audioEngine;
 }
 
 Dispatcher* SingletonManager::dispatcher()

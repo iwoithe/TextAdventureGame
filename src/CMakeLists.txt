@@ -1,3 +1,4 @@
+add_subdirectory(audio)
 add_subdirectory(dispatcher)
 add_subdirectory(enemies)
 add_subdirectory(game)

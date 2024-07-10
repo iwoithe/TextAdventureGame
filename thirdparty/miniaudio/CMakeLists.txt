@@ -1,0 +1,4 @@
+add_library(miniaudio
+    miniaudio.cpp
+    miniaudio.h
+)

@@ -6,6 +6,7 @@
 
 #include "iwany.h"
 
+#include "audio/audioengine.h"
 #include "dispatcher/dispatcher.h"
 
 using namespace iw;
@@ -26,11 +27,13 @@ public:
 
     static SingletonManager* instance();
 
+    AudioEngine* audioEngine();
     Dispatcher* dispatcher();
 
 private:
     static SingletonManager* m_instancePtr;
 
+    AudioEngine* m_audioEngine;
     Dispatcher* m_dispatcher;
 };
 
