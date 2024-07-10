@@ -46,7 +46,7 @@ class Dispatcher
 {
 public:
     Dispatcher() = default;
-    ~Dispatcher() = default;
+    ~Dispatcher();
 
     Dispatcher(const Dispatcher& obj) = delete;
 

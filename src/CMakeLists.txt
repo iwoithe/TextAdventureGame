@@ -1,4 +1,5 @@
 add_subdirectory(dispatcher)
+add_subdirectory(enemies)
 add_subdirectory(game)
 add_subdirectory(global)
 add_subdirectory(items)

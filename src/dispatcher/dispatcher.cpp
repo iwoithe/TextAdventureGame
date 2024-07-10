@@ -2,6 +2,8 @@
 
 #include "global/log.h"
 
+Dispatcher::~Dispatcher() {}
+
 void Dispatcher::dispatch(const std::string& code, Parameters p)
 {
     for (auto& actionMap : m_actionsMap) {

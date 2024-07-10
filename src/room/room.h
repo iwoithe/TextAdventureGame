@@ -1,16 +1,12 @@
 #ifndef ROOM_H
 #define ROOM_H
 
+#include "global/structs.h"
+
 #include "iwstring.h"
 #include "items/iitem.h"
 
 using namespace iw;
-
-struct RoomPos
-{
-    int x;
-    int y;
-};
 
 class Room
 {

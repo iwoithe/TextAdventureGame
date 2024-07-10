@@ -13,6 +13,8 @@
 
 #include "dispatcher/dispatcher.h"
 
+#include "enemies/enemymanager.h"
+
 #include "items/appleitem.h"
 #include "items/breaditem.h"
 #include "items/iitem.h"
@@ -76,6 +78,8 @@ void Game::addGameObject(IGameObject* gameObject)
 
 void Game::initGameObjects()
 {
+    addGameObject(new EnemyManager());
+
     Player* player = new Player();
 
     player->inventorySizeChanged().onReceive(nullptr, [&](int newSize) {
@@ -100,6 +104,7 @@ void Game::addRoom(Room* r)
 
 void Game::addRoom(const String& description, IItem* item, const RoomPos& roomPos)
 {
+    dispatcher()->dispatch("enemy-manager-add-enemy-to-room", Parameters({ Any(roomPos) }));
     Room* r = new Room(description, item, roomPos);
     m_rooms.push_back(r);
 }
@@ -281,8 +286,8 @@ void Game::loadAvailableItems()
         }
     }
 
-    std::sort(m_availableItemsNames.begin(), m_availableItemsNames.end(), [=](const String& a, const String& b) {return a < b;});
-    std::sort(m_availableItemsDescriptions.begin(), m_availableItemsDescriptions.end(), [=](const String& a, const String& b) {return a < b;});
+    // std::sort(m_availableItemsNames.begin(), m_availableItemsNames.end(), [=](const String& a, const String& b) {return a < b;});
+    // std::sort(m_availableItemsDescriptions.begin(), m_availableItemsDescriptions.end(), [=](const String& a, const String& b) {return a < b;});
 }
 
 void Game::loadAvailableSpells()
@@ -301,8 +306,8 @@ void Game::loadAvailableSpells()
         }
     }
 
-    std::sort(m_availableSpellsNames.begin(), m_availableSpellsNames.end(), [=](const String& a, const String& b) {return a < b;});
-    std::sort(m_availableSpellsDescription.begin(), m_availableSpellsDescription.end(), [=](const String& a, const String& b) {return a < b;});
+    // std::sort(m_availableSpellsNames.begin(), m_availableSpellsNames.end(), [=](const String& a, const String& b) {return a < b;});
+    // std::sort(m_availableSpellsDescription.begin(), m_availableSpellsDescription.end(), [=](const String& a, const String& b) {return a < b;});
 }
 
 void Game::handleInput()
@@ -417,6 +422,8 @@ void Game::handleMoveRoomMenu(const int& key)
             dispatcher()->dispatch("player-add-item-to-inventory", Parameters({ Any(m_currentRoom->item()) }));
             m_currentRoom->removeItem();
         }
+
+        dispatcher()->dispatch("enemy-manager-attack-in-room", Parameters({ Any(m_currentRoom->roomPos()) }));
 
         setMenu(Menu::Main);
     }
