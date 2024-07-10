@@ -5,7 +5,10 @@
 #include "async/channel.h"
 #include "async/notification.h"
 
+#include "audio/audioengine.h"
+
 #include "dispatcher/dispatcher.h"
+
 #include "global/enums.h"
 #include "global/igameobject.h"
 #include "iwstring.h"
@@ -104,6 +107,7 @@ using namespace iw;
 class Game : public async::Asyncable
 {
     INJECT_SINGLETON_ALIAS(dispatcher, dispatcher, Dispatcher);
+    INJECT_SINGLETON_ALIAS(audioEngine, audioEngine, AudioEngine);
 public:
     Game();
     ~Game();

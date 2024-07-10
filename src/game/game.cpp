@@ -48,7 +48,10 @@ Game::Game()
 
     init();
 
+    audioEngine()->start();
+
     gameIntro();
+
     setMenu(Menu::Main);
 }
 
@@ -611,6 +614,7 @@ void Game::run()
 
     while (m_isRunning) {
         app::async::processEvents();
+        audioEngine()->processEvents();
         handleInput();
     }
 }

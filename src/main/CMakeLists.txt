@@ -9,3 +9,5 @@ target_link_libraries(textadventuregame PRIVATE
     singleton
     game
 )
+
+install(TARGETS textadventuregame DESTINATION bin)

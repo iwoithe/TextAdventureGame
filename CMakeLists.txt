@@ -12,3 +12,5 @@ set(CMAKE_BUILD_TYPE Debug)
 
 add_subdirectory(thirdparty)
 add_subdirectory(src)
+
+install(DIRECTORY share DESTINATION .)
