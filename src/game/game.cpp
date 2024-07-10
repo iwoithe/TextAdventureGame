@@ -150,6 +150,10 @@ void Game::gameIntro() const
 {
     String("Text Adventure Game").writeToConsole();
     String("Made by Ilias Woithe").writeToConsole();
+    String("You wake up and find yourself in a cold, dark dungeon...").writeToConsole();
+    String("There is only one room which has an exit").writeToConsole();
+    String("You must escape or else").writeToConsole();
+    String("But be careful as there is an enemy in each room").writeToConsole();
     String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [Esc] or [q] to go back a menu/quit if in main menu").writeToConsole();
     String("Press [m] to enter the move menu").writeToConsole();
     String("Press [i] to enter the inventory menu").writeToConsole();
