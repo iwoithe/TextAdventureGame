@@ -90,6 +90,7 @@ String::~String()
 {
     if (m_data) {
         delete[] m_data;
+        m_data = nullptr;
     }
 }
 
@@ -218,6 +219,7 @@ String& String::append(const String& other)
     clearData(len);
     strcpy_s(m_data, len, newStr);
     delete[] newStr;
+    newStr = nullptr;
 
     return *this;
 }
@@ -282,8 +284,11 @@ String& String::stripFormatting()
         findIndex = find("\033[");
 
         delete[] remainingStr;
+        remainingStr = nullptr;
         delete[] newStr;
+        newStr = nullptr;
         delete[] ansiStr;
+        ansiStr = nullptr;
     }
 
     return *this;
@@ -555,7 +560,9 @@ String& String::replace(const String& findStr, const String& replaceStr)
         findIndex = find(findStr);
 
         delete[] remainingStr;
+        remainingStr = nullptr;
         delete[] newStr;
+        newStr = nullptr;
     }
 
     return *this;
@@ -596,6 +603,7 @@ void String::readFromConsole()
     strcpy_s(m_data, strlen(str) + 1, str);
 
     delete[] str;
+    str = nullptr;
 
     std::cin.clear();
 }
@@ -622,15 +630,18 @@ void String::appendNullTerminator()
         temp[len] = '\0';
         strcpy_s(temp, len + 1, m_data);
         delete[] m_data;
+        m_data = nullptr;
         m_data = new char[len + 1];
         strcpy_s(m_data, len + 1, temp);
         delete[] temp;
+        temp = nullptr;
     }
 }
 
 void String::clearData()
 {
     delete[] m_data;
+    m_data = nullptr;
     initData(0, true);
 }
 
@@ -642,6 +653,7 @@ void String::clearData(const int newLength)
 void String::clearData(const int newLength, const bool appendNullTerminator_)
 {
     delete[] m_data;
+    m_data = nullptr;
 
     if (appendNullTerminator_) {
         initData(newLength + 1);
