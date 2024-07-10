@@ -56,8 +56,9 @@ Game::~Game()
         gameObject->deInit();
     }
 
-    DEL_PTR_S(m_currentRoom);
     DEL_STD_VEC(m_gameObjects);
+
+    m_currentRoom = nullptr;
     DEL_STD_VEC(m_rooms);
 }
 
