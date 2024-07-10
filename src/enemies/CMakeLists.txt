@@ -4,8 +4,8 @@ set(MODULE_SRC
     enemies.h
     enemymanager.cpp
     enemymanager.h
-    goblin.cpp
-    goblin.h
+    goblinenemy.cpp
+    goblinenemy.h
     ienemy.h
 )
 

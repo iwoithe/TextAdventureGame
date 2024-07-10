@@ -3,11 +3,11 @@
 
 #include "ienemy.h"
 
-class Goblin : public IEnemy
+class GoblinEnemy : public IEnemy
 {
 public:
-    Goblin();
-    ~Goblin() = default;
+    GoblinEnemy();
+    ~GoblinEnemy() = default;
 
     void init() override;
     void deInit() override;

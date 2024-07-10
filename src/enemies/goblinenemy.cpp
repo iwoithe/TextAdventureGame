@@ -1,21 +1,21 @@
-#include "goblin.h"
+#include "goblinenemy.h"
 
-Goblin::Goblin()
+GoblinEnemy::GoblinEnemy()
 {
     m_name = String("Goblin");
     m_description = String("Attacks the player");
 }
 
-void Goblin::init() {}
+void GoblinEnemy::init() {}
 
-void Goblin::deInit() {}
+void GoblinEnemy::deInit() {}
 
-void Goblin::attack()
+void GoblinEnemy::attack()
 {
     String("Goblin attack").writeToConsole();
 }
 
-void Goblin::defend()
+void GoblinEnemy::defend()
 {
     String("Goblin defend").writeToConsole();
 }

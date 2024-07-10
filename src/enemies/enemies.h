@@ -8,7 +8,7 @@
 #define ENEMY_TYPE_LENGTH 1
 
 enum EnemyType {
-    GoblinT
+    Goblin
 };
 
 // IEnemy* createRandomEnemy();
