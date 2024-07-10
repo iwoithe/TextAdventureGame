@@ -24,9 +24,6 @@ public:
     SingletonManager(const SingletonManager& s) = delete;
     ~SingletonManager();
 
-    void initInstance();
-    void destroyInstance();
-
     static SingletonManager* instance();
 
     Dispatcher* dispatcher();

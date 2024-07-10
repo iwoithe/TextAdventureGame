@@ -13,7 +13,6 @@ SingletonManager::SingletonManager()
 SingletonManager::~SingletonManager()
 {
     DEL_PTR_S(m_dispatcher);
-    DEL_PTR_S(m_instancePtr);
 }
 
 SingletonManager* SingletonManager::m_instancePtr = nullptr;
