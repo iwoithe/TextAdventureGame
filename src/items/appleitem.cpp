@@ -20,7 +20,7 @@ const String& AppleItem::description() const
     return m_description;
 }
 
-void AppleItem::use()
+void AppleItem::use(const RoomPos& roomPos)
 {
     dispatcher()->dispatch("player-heal", Parameters({ Any(m_healAmount) }));
     String("Player healed by ").append(m_healAmount).append(" health").writeToConsole();

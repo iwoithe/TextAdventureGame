@@ -10,7 +10,7 @@ public:
     ~StubItem() {};
     const String& name() const override { return m_name; };
     const String& description() const override { return m_description; };
-    void use() override {};
+    void use(const RoomPos& roomPos) override {};
 private:
     String m_name;
     String m_description;

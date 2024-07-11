@@ -20,7 +20,7 @@ const String& BreadItem::description() const
     return m_description;
 }
 
-void BreadItem::use()
+void BreadItem::use(const RoomPos& roomPos)
 {
     dispatcher()->dispatch("player-heal", Parameters({ Any(m_healAmount )}));
     String("Player healed by ").append(m_healAmount).append(" health").writeToConsole();

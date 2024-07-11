@@ -11,6 +11,7 @@
 #include "global/enums.h"
 #include "global/igameobject.h"
 #include "singleton/singletonmanager.h"
+#include "global/structs.h"
 
 #include "items/iitem.h"
 #include "spells/ispell.h"

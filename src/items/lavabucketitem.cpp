@@ -18,7 +18,7 @@ const String& LavaBucketItem::description() const
     return m_description;
 }
 
-void LavaBucketItem::use()
+void LavaBucketItem::use(const RoomPos& roomPos)
 {
-    dispatcher()->dispatch("use-lava-bucket", Parameters());
+    dispatcher()->dispatch("remove-all-enemies-from-room", Parameters({ Any(roomPos) }));
 }

@@ -18,7 +18,7 @@ const String& SpellPotionItem::description() const
     return m_description;
 }
 
-void SpellPotionItem::use()
+void SpellPotionItem::use(const RoomPos& roomPos)
 {
     dispatcher()->dispatch("player-gain-random-spell", Parameters());
 }

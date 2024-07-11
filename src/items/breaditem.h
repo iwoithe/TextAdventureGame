@@ -14,7 +14,7 @@ public:
     ~BreadItem() = default;
     const String& name() const override;
     const String& description() const override;
-    void use() override;
+    void use(const RoomPos& roomPos) override;
 private:
     String m_name;
     String m_description;

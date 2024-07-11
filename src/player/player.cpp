@@ -165,7 +165,7 @@ void Player::useInventoryItem(const int& index)
         return;
     }
 
-    item.item->use();
+    item.item->use(RoomPos(m_playerData.currentRoom.x, m_playerData.currentRoom.y));
     delete item.item;
     m_inventory.erase(m_inventory.begin() + index);
     m_inventorySizeChanged.send(m_inventory.size());
