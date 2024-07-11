@@ -84,8 +84,6 @@ void Player::heal(const int& amount)
         // Clamp health to maximum health
         m_playerData.health = m_playerData.maxHealth;
     }
-
-    String("Health: ").append(m_playerData.health).writeToConsole();
 }
 
 void Player::hurt(const int& amount)
