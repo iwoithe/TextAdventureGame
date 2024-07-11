@@ -3,6 +3,7 @@
 #include "enemies/enemies.h"
 
 #include "global/delete.h"
+#include "global/random.h"
 #include "global/structs.h"
 
 EnemyManager::EnemyManager() {}
@@ -20,6 +21,10 @@ void EnemyManager::init()
 
     dispatcher()->reg("remove-all-enemies-from-room", [&](Parameters params) {
         removeAllEnemiesFromRoom(params[0].get<RoomPos>());
+    });
+
+    dispatcher()->reg("remove-random-enemy-from-room", [&](Parameters params) {
+        removeRandomEnemyFromRoom(params[0].get<RoomPos>());
     });
 
     dispatcher()->reg("enemy-manager-attack-in-room", [&](Parameters params) {
@@ -61,8 +66,29 @@ void EnemyManager::removeAllEnemiesFromRoom(const RoomPos& roomPos)
 {
     for (int i = 0; i < m_enemies.size(); i++) {
         IEnemy* e = m_enemies[i];
-        m_enemies.erase(m_enemies.begin() + i);
-        delete e;
+        if (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y) {
+            m_enemies.erase(m_enemies.begin() + i);
+            delete e;
+            e = nullptr;
+        }
+
         e = nullptr;
     }
+}
+
+void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
+{
+    std::vector<IEnemy*> enemiesInRoom;
+    for (int i = 0; i < m_enemies.size(); i++) {
+        IEnemy* e = m_enemies[i];
+        if (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y) {
+            enemiesInRoom.push_back(e);
+        }
+
+        e = nullptr;
+    }
+
+    IEnemy* e = enemiesInRoom[randRange(0, enemiesInRoom.size() - 1)];
+    delete e;
+    e = nullptr;
 }

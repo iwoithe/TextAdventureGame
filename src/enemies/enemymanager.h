@@ -21,6 +21,7 @@ public:
 
     void addEnemyToRoom(const RoomPos& roomPos);
     void removeAllEnemiesFromRoom(const RoomPos& roomPos);
+    void removeRandomEnemyFromRoom(const RoomPos& roomPos);
 
     void attackInRoom(const RoomPos& roomPos);
     void defendInRoom(const RoomPos& roomPos);
