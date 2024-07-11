@@ -168,6 +168,7 @@ void Game::gameIntro() const
     String("There is only one room which has an exit").writeToConsole();
     String("You must escape or else").writeToConsole();
     String("But be careful as there is an enemy in each room").writeToConsole();
+    String("Be warned as every time you move, use an inventory item, or use a spell, the enemies will attack").writeToConsole();
     String().appendColor(Color::Magenta, ColorLayer::Foreground).append("Press [Esc] or [q] to go back a menu/quit if in main menu").writeToConsole();
     String("Press [m] to enter the move menu").writeToConsole();
     String("Press [i] to enter the inventory menu").writeToConsole();
@@ -483,6 +484,8 @@ void Game::handleInventoryMenu(const int& key)
         // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
         dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
 
+        dispatcher()->dispatch("enemy-manager-attack-in-room", Parameters({ Any(m_currentRoom->roomPos()) }));
+
         _m__himNum = 0;
         setMenu(Menu::Main);
     }
@@ -541,6 +544,8 @@ void Game::handleSpellMenu(const int& key)
 
         // _m__himNum - 1 as Player::castSpell uses 0-index, but items listed out as index + 1
         dispatcher()->dispatch("player-cast-spell", Parameters({ Any(_m__hsmNum - 1) }));
+
+        dispatcher()->dispatch("enemy-manager-attack-in-room", Parameters({ Any(m_currentRoom->roomPos()) }));
 
         _m__hsmNum = 0;
         setMenu(Menu::Main);
