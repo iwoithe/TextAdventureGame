@@ -16,16 +16,15 @@ public:
     void initAudioEngine();
     void deInitAudioEngine();
 
-    void playFile(const String& filePath);
-    void playFileLoop(const String& filePath);
-
-    bool isIntroDone() const;
+    void initSounds();
 
     void start();
     void processEvents();
 
-    void initFadeOut();
     void fadeOutAudio();
+
+    void reset();
+
 private:
     ma_engine m_engine;
 

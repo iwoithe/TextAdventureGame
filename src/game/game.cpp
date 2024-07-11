@@ -50,6 +50,9 @@ Game::~Game()
 
 void Game::init()
 {
+    audioEngine()->reset();
+    audioEngine()->start();
+
     m_playerInventorySize = 0;
     m_playerSpellsSize = 0;
 
@@ -61,8 +64,6 @@ void Game::init()
     m_currentRoom = findRoom(RoomPos(0, 0));
 
     m_escapableRoomPos = RoomPos(randRange(-m_worldSize, m_worldSize), randRange(-m_worldSize, m_worldSize));
-
-    //audioEngine()->start();
 
     gameIntro();
 
@@ -102,6 +103,7 @@ void Game::initGameObjects()
 
     player->died().onNotify(nullptr, [&]() {
         // TODO: Why is "[Main Menu]" + the player stats not showing if the player looses and plays again (works if the player wins the game)?
+        audioEngine()->fadeOutAudio();
         m_isRunning = false;
     });
 
@@ -365,6 +367,7 @@ void Game::handleQuit(const int& key)
     if (key == KEY_ESCAPE || key == KEY_q) {
         switch (m_currentMenu) {
             case Menu::Main:
+                audioEngine()->fadeOutAudio();
                 m_isRunning = false;
                 break;
             case Menu::MoveRoom:
@@ -430,6 +433,7 @@ void Game::handleMoveRoomMenu(const int& key)
 
         if (newPos.x == m_escapableRoomPos.x && newPos.y == m_escapableRoomPos.y) {
             String("You found the escapable room!").writeToConsole();
+            audioEngine()->fadeOutAudio();
             m_isRunning = false;
             return;
         }
@@ -642,7 +646,7 @@ void Game::run()
 
     while (m_isRunning) {
         app::async::processEvents();
-        //audioEngine()->processEvents();
+        audioEngine()->processEvents();
         handleInput();
     }
 
@@ -687,11 +691,8 @@ void Game::run()
     String().writeToConsole();
 
     if (playAgain) {
-        //audioEngine()->reset();
         clear();
         init();
         run();
     }
-
-    //audioEngine()->fadeOutAudio();
 }

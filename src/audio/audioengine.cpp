@@ -5,6 +5,7 @@
 AudioEngine::AudioEngine()
 {
     initAudioEngine();
+    initSounds();
 }
 
 AudioEngine::~AudioEngine()
@@ -23,52 +24,46 @@ void AudioEngine::initAudioEngine()
 void AudioEngine::deInitAudioEngine()
 {
     ma_sound_stop(&m_introSound);
+    ma_sound_set_looping(&m_gameLoopSound, false);
     ma_sound_stop(&m_gameLoopSound);
-    
-    // TODO: Why does this segfault?
-    // ma_sound_uninit(&m_introSound);
-    // ma_sound_uninit(&m_gameLoopSound);
+
+    ma_sound_uninit(&m_introSound);
+    ma_sound_uninit(&m_gameLoopSound);
     ma_engine_uninit(&m_engine);
 }
 
-void AudioEngine::playFile(const String& filePath)
+void AudioEngine::initSounds()
 {
-    ma_result result = ma_sound_init_from_file(&m_engine, filePath.cStr(), 0, NULL, NULL, &m_introSound);
+    ma_result result;
+    result = ma_sound_init_from_file(&m_engine, String("../share/music/intro.wav").cStr(), 0, NULL, NULL, &m_introSound);
     if (result != MA_SUCCESS) {
         ma_engine_uninit(&m_engine);
         throw std::runtime_error("[CRITICAL ERROR] File could not be found");
     }
 
-    ma_sound_start(&m_introSound);
-}
-
-void AudioEngine::playFileLoop(const String& filePath)
-{
-    ma_result result = ma_sound_init_from_file(&m_engine, filePath.cStr(), 0, NULL, NULL, &m_gameLoopSound);
+    result = ma_sound_init_from_file(&m_engine, String("../share/music/gameloop.wav").cStr(), 0, NULL, NULL, &m_gameLoopSound);
     if (result != MA_SUCCESS) {
         ma_engine_uninit(&m_engine);
         throw std::runtime_error("[CRITICAL ERROR] File could not be found");
     }
 
     ma_sound_set_looping(&m_gameLoopSound, true);
-
-    ma_sound_start(&m_gameLoopSound);
 }
 
 void AudioEngine::start()
 {
-    playFile("../share/music/intro.wav");
+    ma_sound_start(&m_introSound);
 }
 
 void AudioEngine::processEvents()
 {
     if (!ma_sound_is_playing(&m_introSound) && !m_gameLoopPlaying) {
         m_gameLoopPlaying = true;
-        playFileLoop("../share/music/gameloop.wav");
+        ma_sound_start(&m_gameLoopSound);
     }
 }
 
-void AudioEngine::initFadeOut()
+void AudioEngine::fadeOutAudio()
 {
     if (!m_gameLoopPlaying) {
         m_fadingOutIntro = true;
@@ -77,13 +72,9 @@ void AudioEngine::initFadeOut()
 
     if (m_gameLoopPlaying) {
         m_fadingOutGameLoop = true;
+        ma_sound_set_looping(&m_gameLoopSound, false);
         ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 0.0f, 1000);
     }
-}
-
-void AudioEngine::fadeOutAudio()
-{
-    initFadeOut();
 
     if (m_fadingOutIntro) {
         while (true) {
@@ -91,6 +82,8 @@ void AudioEngine::fadeOutAudio()
                 break;
             }
         }
+
+        ma_sound_stop(&m_introSound);
     }
 
     if (m_fadingOutGameLoop) {
@@ -99,5 +92,16 @@ void AudioEngine::fadeOutAudio()
                 break;
             }
         }
+
+        ma_sound_stop(&m_gameLoopSound);
     }
+}
+
+void AudioEngine::reset()
+{
+    ma_sound_seek_to_pcm_frame(&m_introSound, 0);
+    ma_sound_seek_to_pcm_frame(&m_gameLoopSound, 0);
+
+    ma_sound_set_fade_in_milliseconds(&m_introSound, -1, 1, 1000);
+    ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 1, 1000);
 }
