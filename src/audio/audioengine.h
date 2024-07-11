@@ -28,13 +28,9 @@ public:
     void fadeOutAudio();
 private:
     ma_engine m_engine;
-    ma_device m_device;
 
     ma_sound m_introSound;
     ma_sound m_gameLoopSound;
-
-    ma_device m_gameLoopDevice;
-    ma_decoder m_gameLoopDecoder;
 
     bool m_gameLoopPlaying = false;
 
