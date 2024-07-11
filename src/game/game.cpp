@@ -617,4 +617,6 @@ void Game::run()
         audioEngine()->processEvents();
         handleInput();
     }
+
+    audioEngine()->fadeOutAudio();
 }

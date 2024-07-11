@@ -23,18 +23,23 @@ public:
 
     void start();
     void processEvents();
+
+    void initFadeOut();
+    void fadeOutAudio();
 private:
     ma_engine m_engine;
     ma_device m_device;
 
     ma_sound m_introSound;
+    ma_sound m_gameLoopSound;
 
     ma_device m_gameLoopDevice;
     ma_decoder m_gameLoopDecoder;
 
     bool m_gameLoopPlaying = false;
-};
 
-void gameLoopCallback(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount);
+    bool m_fadingOutIntro = false;
+    bool m_fadingOutGameLoop = false;
+};
 
 #endif // AUDIO_AUDIOENGINE_H
