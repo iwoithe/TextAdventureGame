@@ -7,6 +7,7 @@ set(MODULE_SRC
     globalstub.cpp
     log.h
     igameobject.h
+    random.h
 )
 
 setup_module()

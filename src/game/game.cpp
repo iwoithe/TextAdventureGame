@@ -10,6 +10,7 @@
 #include "global/delete.h"
 #include "global/ints.h"
 #include "global/log.h"
+#include "global/random.h"
 
 #include "dispatcher/dispatcher.h"
 
@@ -45,6 +46,8 @@ Game::Game()
     m_rooms = {};
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = findRoom(RoomPos(0, 0));
+
+    m_escapableRoomPos = RoomPos(randRange(-m_worldSize, m_worldSize), randRange(-m_worldSize, m_worldSize));
 
     init();
 
@@ -408,6 +411,15 @@ void Game::handleMoveRoomMenu(const int& key)
                 break;
         }
 
+        // Flush and end the current line
+        String().writeToConsole();
+
+        if (newPos.x == m_escapableRoomPos.x && newPos.y == m_escapableRoomPos.y) {
+            String("You found the escapable room!").writeToConsole();
+            m_isRunning = false;
+            return;
+        }
+
         Room* r = findRoom(newPos);
         if (r == nullptr) {
             addRandomRoom(newPos);
@@ -416,8 +428,6 @@ void Game::handleMoveRoomMenu(const int& key)
             m_currentRoom = r;
         }
 
-        // Flush and end the current line
-        String().writeToConsole();
         if (m_currentRoom->isEmpty()) {
             String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") is empty").writeToConsole();
         } else {

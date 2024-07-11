@@ -159,6 +159,8 @@ private:
 
     Room* m_currentRoom;
 
+    RoomPos m_escapableRoomPos;
+
     // Relative room, a value 1 - 4, only to be used in moveRoomMenu()
     int _m__moveToRoomRel;
 
@@ -171,6 +173,8 @@ private:
 
     int m_playerInventorySize;
     int m_playerSpellsSize;
+
+    int m_worldSize = 2;
 
     std::vector<String> m_availableItemsNames;
     std::vector<String> m_availableItemsDescriptions;
