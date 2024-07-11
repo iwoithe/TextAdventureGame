@@ -64,16 +64,15 @@ void EnemyManager::defendInRoom(const RoomPos& roomPos)
 
 void EnemyManager::removeAllEnemiesFromRoom(const RoomPos& roomPos)
 {
-    for (int i = 0; i < m_enemies.size(); i++) {
-        IEnemy* e = m_enemies[i];
-        if (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y) {
-            m_enemies.erase(m_enemies.begin() + i);
+    std::erase_if(m_enemies, [&](IEnemy* e) {
+        bool shouldDelete = (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y);
+        if (shouldDelete) {
             delete e;
             e = nullptr;
         }
 
-        e = nullptr;
-    }
+        return shouldDelete;
+    });
 }
 
 void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
@@ -88,7 +87,16 @@ void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
         e = nullptr;
     }
 
-    IEnemy* e = enemiesInRoom[randRange(0, enemiesInRoom.size() - 1)];
-    delete e;
-    e = nullptr;
+    switch (enemiesInRoom.size()) {
+        case 0:
+            break;
+        case 1:
+            delete enemiesInRoom[0];
+            break;
+        default:
+            IEnemy* e = enemiesInRoom[randRange(0, enemiesInRoom.size() - 1)];
+            delete e;
+            e = nullptr;
+            break;
+    }
 }
