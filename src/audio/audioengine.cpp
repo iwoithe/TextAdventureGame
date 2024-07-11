@@ -104,4 +104,6 @@ void AudioEngine::reset()
 
     ma_sound_set_fade_in_milliseconds(&m_introSound, -1, 1, 1000);
     ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 1, 1000);
+
+    ma_sound_set_looping(&m_gameLoopSound, true);
 }
