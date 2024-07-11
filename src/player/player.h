@@ -5,6 +5,7 @@
 
 #include "async/asyncable.h"
 #include "async/channel.h"
+#include "async/notification.h"
 
 #include "dispatcher/dispatcher.h"
 #include "global/enums.h"
@@ -45,6 +46,8 @@ public:
     void deInit() override;
 
     void heal(const int& amount);
+    void hurt(const int& amount);
+
     void moveRoom(Direction dir);
 
     void addItemToInventory(IItem* item);
@@ -70,6 +73,9 @@ public:
     void listSpells() const;
 
     void gainRandomSpell();
+
+    async::Notification died();
+
 private:
     PlayerData m_playerData;
 
@@ -82,6 +88,8 @@ private:
 
     // The known spells to the player
     std::vector<ISpell*> m_spells;
+
+    async::Notification m_died;
 };
 
 #endif // PLAYER_PLAYER_H

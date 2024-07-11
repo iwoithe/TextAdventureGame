@@ -12,7 +12,7 @@ class KillSpell : public ISpell
 public:
     KillSpell();
     ~KillSpell() = default;
-    void cast() override;
+    void cast(const RoomPos& roomPos) override;
 };
 
 #endif // SPELLS_KILLSPELL_H

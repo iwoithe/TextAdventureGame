@@ -69,6 +69,10 @@ void Player::init()
     dispatcher()->reg("player-gain-random-spell", [&](Parameters params) {
         gainRandomSpell();
     });
+
+    dispatcher()->reg("player-hurt", [&](Parameters params) {
+        hurt(params[0].get<int>());
+    });
 }
 
 void Player::deInit() {}
@@ -82,6 +86,20 @@ void Player::heal(const int& amount)
     }
 
     String("Health: ").append(m_playerData.health).writeToConsole();
+}
+
+void Player::hurt(const int& amount)
+{
+    m_playerData.health -= amount;
+    if (m_playerData.health <= 0) {
+        m_playerData.health = 0;
+        m_died.notify();
+    }
+}
+
+async::Notification Player::died()
+{
+    return m_died;
 }
 
 void Player::moveRoom(Direction dir)
@@ -214,7 +232,7 @@ void Player::castSpell(int index)
         return;
     }
 
-    m_spells[index]->cast();
+    m_spells[index]->cast(RoomPos(m_playerData.currentRoom.x, m_playerData.currentRoom.y));
 }
 
 void Player::listSpells() const

@@ -96,6 +96,10 @@ void Game::initGameObjects()
         m_playerSpellsSize = newSize;
     });
 
+    player->died().onNotify(nullptr, [&]() {
+        m_isRunning = false;
+    });
+
     addGameObject(player);
 
     for (IGameObject* gameObject : m_gameObjects) {
@@ -110,7 +114,11 @@ void Game::addRoom(Room* r)
 
 void Game::addRoom(const String& description, IItem* item, const RoomPos& roomPos)
 {
-    dispatcher()->dispatch("enemy-manager-add-enemy-to-room", Parameters({ Any(roomPos) }));
+    // Create a random number of enemies in each room
+    for (int i = 0; i < randRange(1, 4); i++) {
+        dispatcher()->dispatch("enemy-manager-add-enemy-to-room", Parameters({ Any(roomPos) }));
+    }
+
     Room* r = new Room(description, item, roomPos);
     m_rooms.push_back(r);
 }

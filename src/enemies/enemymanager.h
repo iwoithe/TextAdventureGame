@@ -20,6 +20,7 @@ public:
     void deInit() override;
 
     void addEnemyToRoom(const RoomPos& roomPos);
+    void removeAllEnemiesFromRoom(const RoomPos& roomPos);
 
     void attackInRoom(const RoomPos& roomPos);
     void defendInRoom(const RoomPos& roomPos);

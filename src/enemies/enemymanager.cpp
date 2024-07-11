@@ -18,6 +18,10 @@ void EnemyManager::init()
         addEnemyToRoom(params[0].get<RoomPos>());
     });
 
+    dispatcher()->reg("remove-all-enemies-from-room", [&](Parameters params) {
+        removeAllEnemiesFromRoom(params[0].get<RoomPos>());
+    });
+
     dispatcher()->reg("enemy-manager-attack-in-room", [&](Parameters params) {
         attackInRoom(params[0].get<RoomPos>());
     });
@@ -50,5 +54,15 @@ void EnemyManager::defendInRoom(const RoomPos& roomPos)
         if (enemy->roomPos().x == roomPos.x && enemy->roomPos().y == roomPos.y) {
             enemy->defend();
         }
+    }
+}
+
+void EnemyManager::removeAllEnemiesFromRoom(const RoomPos& roomPos)
+{
+    for (int i = 0; i < m_enemies.size(); i++) {
+        IEnemy* e = m_enemies[i];
+        m_enemies.erase(m_enemies.begin() + i);
+        delete e;
+        e = nullptr;
     }
 }

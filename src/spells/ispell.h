@@ -3,6 +3,8 @@
 
 #include "iwstring.h"
 
+#include "global/structs.h"
+
 using namespace iw;
 
 class ISpell
@@ -25,7 +27,7 @@ public:
 
     const String& name() const { return m_name; }
     const String& description() const { return m_description; }
-    virtual void cast() = 0;
+    virtual void cast(const RoomPos& roomPos) = 0;
 protected:
     String m_name;
     String m_description;
