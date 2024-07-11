@@ -33,12 +33,25 @@
 Game::Game()
 {
     srand(time(0));
-
-    m_playerInventorySize = 0;
-    m_playerSpellsSize = 0;
-
     loadAvailableItems();
     loadAvailableSpells();
+
+    m_currentMenuChanged.onReceive(nullptr, [&](Menu menu) {
+        displayMenuIntro(menu);
+    });
+
+    init();
+}
+
+Game::~Game()
+{
+    clear();
+}
+
+void Game::init()
+{
+    m_playerInventorySize = 0;
+    m_playerSpellsSize = 0;
 
     initGameObjects();
 
@@ -49,16 +62,14 @@ Game::Game()
 
     m_escapableRoomPos = RoomPos(randRange(-m_worldSize, m_worldSize), randRange(-m_worldSize, m_worldSize));
 
-    init();
-
-    audioEngine()->start();
+    //audioEngine()->start();
 
     gameIntro();
 
     setMenu(Menu::Main);
 }
 
-Game::~Game()
+void Game::clear()
 {
     for (IGameObject* gameObject : m_gameObjects) {
         gameObject->deInit();
@@ -68,13 +79,6 @@ Game::~Game()
 
     m_currentRoom = nullptr;
     DEL_STD_VEC(m_rooms);
-}
-
-void Game::init()
-{
-    m_currentMenuChanged.onReceive(nullptr, [&](Menu menu) {
-        displayMenuIntro(menu);
-    });
 }
 
 void Game::addGameObject(IGameObject* gameObject)
@@ -97,6 +101,7 @@ void Game::initGameObjects()
     });
 
     player->died().onNotify(nullptr, [&]() {
+        // TODO: Why is "[Main Menu]" + the player stats not showing if the player looses and plays again (works if the player wins the game)?
         m_isRunning = false;
     });
 
@@ -637,9 +642,56 @@ void Game::run()
 
     while (m_isRunning) {
         app::async::processEvents();
-        audioEngine()->processEvents();
+        //audioEngine()->processEvents();
         handleInput();
     }
 
-    audioEngine()->fadeOutAudio();
+    char gameOverPromptChar;
+    bool isPrompt = true;
+    bool playAgain = false;
+
+    String("Play again ([y] or [n])?  ").writeToConsole(false);
+
+    while (isPrompt) {
+        switch (getch()) {
+            case KEY_ENTER:
+                switch (gameOverPromptChar) {
+                    case 'y':
+                        isPrompt = false;
+                        playAgain = true;
+                        String().writeToConsole();
+                        break;
+                    case 'n':
+                        isPrompt = false;
+                        playAgain = false;
+                        String().writeToConsole();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case KEY_y:
+                gameOverPromptChar = 'y';
+                goto finally;
+            case KEY_n:
+                gameOverPromptChar = 'n';
+                goto finally;
+            finally:
+                String().append("\033[1D").append(String(gameOverPromptChar)).writeToConsole(false);
+                break;
+            default:
+                break;
+        }
+    }
+
+    String().writeToConsole();
+
+    if (playAgain) {
+        //audioEngine()->reset();
+        clear();
+        init();
+        run();
+    }
+
+    //audioEngine()->fadeOutAudio();
 }

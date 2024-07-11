@@ -112,6 +112,8 @@ public:
     Game();
     ~Game();
 
+    void clear();
+
     void init();
 
     void addGameObject(IGameObject* gameObject);
