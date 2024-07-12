@@ -21,6 +21,8 @@ public:
     void start();
     void processEvents();
 
+    void playWin();
+
     void fadeOutAudio();
 
     void reset();
@@ -30,8 +32,13 @@ private:
 
     ma_sound m_introSound;
     ma_sound m_gameLoopSound;
+    ma_sound m_winSound;
 
     bool m_gameLoopPlaying = false;
+    bool m_isWinPlaying = false;
+
+    bool m_waitingForIntro = false;
+    bool m_waitingForGameLoop = false;
 
     bool m_fadingOutIntro = false;
     bool m_fadingOutGameLoop = false;

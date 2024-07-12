@@ -176,7 +176,7 @@ private:
     int m_playerInventorySize;
     int m_playerSpellsSize;
 
-    int m_worldSize = 2;
+    int m_worldSize = 1;
 
     std::vector<String> m_availableItemsNames;
     std::vector<String> m_availableItemsDescriptions;

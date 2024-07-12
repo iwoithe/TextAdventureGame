@@ -395,6 +395,10 @@ void Game::handleMainMenu(const int& key)
         case KEY_l:
             setMenu(Menu::ListMenu);
             break;
+        case KEY_w:
+            audioEngine()->playWin();
+            m_isRunning = false;
+            break;
         default:
             break;
     }
@@ -433,7 +437,7 @@ void Game::handleMoveRoomMenu(const int& key)
 
         if (newPos.x == m_escapableRoomPos.x && newPos.y == m_escapableRoomPos.y) {
             String("You found the escapable room!").writeToConsole();
-            audioEngine()->fadeOutAudio();
+            audioEngine()->playWin();
             m_isRunning = false;
             return;
         }

@@ -26,9 +26,11 @@ void AudioEngine::deInitAudioEngine()
     ma_sound_stop(&m_introSound);
     ma_sound_set_looping(&m_gameLoopSound, false);
     ma_sound_stop(&m_gameLoopSound);
+    ma_sound_stop(&m_winSound);
 
     ma_sound_uninit(&m_introSound);
     ma_sound_uninit(&m_gameLoopSound);
+    ma_sound_uninit(&m_winSound);
     ma_engine_uninit(&m_engine);
 }
 
@@ -48,6 +50,12 @@ void AudioEngine::initSounds()
     }
 
     ma_sound_set_looping(&m_gameLoopSound, true);
+
+    result = ma_sound_init_from_file(&m_engine, String("../share/music/win.wav").cStr(), 0, NULL, NULL, &m_winSound);
+    if (result != MA_SUCCESS) {
+        ma_engine_uninit(&m_engine);
+        throw std::runtime_error("[CRITICAL ERROR] File could not be found");
+    }
 }
 
 void AudioEngine::start()
@@ -60,6 +68,44 @@ void AudioEngine::processEvents()
     if (!ma_sound_is_playing(&m_introSound) && !m_gameLoopPlaying) {
         m_gameLoopPlaying = true;
         ma_sound_start(&m_gameLoopSound);
+    }
+}
+void AudioEngine::playWin()
+{
+    if (!ma_sound_is_playing(&m_winSound)) {
+        if (ma_sound_is_playing(&m_introSound)) {
+            m_waitingForIntro = true;
+        }
+
+        if (ma_sound_is_playing(&m_gameLoopSound)) {
+            ma_sound_set_looping(&m_gameLoopSound, false);
+            m_waitingForGameLoop = true;
+        }
+    }
+
+    while (true) {
+        if (m_waitingForIntro) {
+            if (ma_sound_is_playing(&m_introSound) == MA_FALSE) {
+                m_waitingForIntro = false;
+                m_isWinPlaying = true;
+                ma_sound_start(&m_winSound);
+                break;
+            }
+        }
+
+        if (m_waitingForGameLoop) {
+            if (ma_sound_is_playing(&m_gameLoopSound) == MA_FALSE) {
+                m_waitingForGameLoop = false;
+                m_gameLoopPlaying = false;
+                m_isWinPlaying = true;
+                ma_sound_start(&m_winSound);
+                break;
+            }
+        }
+    }
+
+    while (m_isWinPlaying) {
+        m_isWinPlaying = (bool)ma_sound_is_playing(&m_winSound);
     }
 }
 
@@ -106,4 +152,9 @@ void AudioEngine::reset()
     ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 1, 1000);
 
     ma_sound_set_looping(&m_gameLoopSound, true);
+
+    m_gameLoopPlaying = false;
+    m_isWinPlaying = false;
+    m_fadingOutIntro = false;
+    m_fadingOutGameLoop = false;
 }
