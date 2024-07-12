@@ -13,12 +13,12 @@ void GoblinEnemy::deInit() {}
 
 void GoblinEnemy::attack()
 {
-    String("Goblin attacking player").writeToConsole();
+    String().appendColor(Color::Red, ColorLayer::Foreground).append("A goblin has attacked you").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
     dispatcher()->dispatch("player-hurt", Parameters({ Any(m_damage) }));
 }
 
 void GoblinEnemy::defend()
 {
-    String("Goblin defend").writeToConsole();
+    String().appendColor(Color::Red, ColorLayer::Foreground).append("A goblin has defended itself").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
 }
 
