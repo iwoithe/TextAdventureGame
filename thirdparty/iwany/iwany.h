@@ -15,17 +15,6 @@ public:
     {
         return std::any_cast<T>(m_data);
     }
-
-    template<typename T> T get_s() const
-    {
-        try {
-            return std::any_cast<T>(m_data);
-        } catch (const std::bad_any_cast& e) {
-            std::cout << e.what() << "\n[WARNING] Returning default constructor value instead" << std::endl;
-            T t;
-            return t;
-        }
-    }
 private:
     std::any m_data;
 };

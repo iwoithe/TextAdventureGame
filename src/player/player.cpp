@@ -163,6 +163,7 @@ void Player::useInventoryItem(const int& index)
     }
 
     item.item->use(RoomPos(m_playerData.currentRoom.x, m_playerData.currentRoom.y));
+    // Items can only be used once
     delete item.item;
     m_inventory.erase(m_inventory.begin() + index);
     m_inventorySizeChanged.send(m_inventory.size());
@@ -229,6 +230,7 @@ void Player::castSpell(int index)
         return;
     }
 
+    // Spells can be cast multiple times
     m_spells[index]->cast(RoomPos(m_playerData.currentRoom.x, m_playerData.currentRoom.y));
 }
 

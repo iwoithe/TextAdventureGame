@@ -6,7 +6,6 @@
 template<typename T>
 int binarySearch(std::vector<T> items, T key)
 {
-    // Only works on sorted lists
     int l = 0;
     int r = items.size() - 1;
 
@@ -31,7 +30,6 @@ int binarySearch(std::vector<T> items, T key)
 template<typename A, typename B>
 int binarySearch(std::vector<A> items, B key)
 {
-    // Only works on sorted lists
     int l = 0;
     int r = items.size() - 1;
 

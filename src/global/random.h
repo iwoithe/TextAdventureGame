@@ -5,6 +5,10 @@
 
 inline int randRange(int lowerLimit, int upperLimit)
 {
+    if (lowerLimit == upperLimit) {
+        return lowerLimit;
+    }
+
     return rand() % (upperLimit - lowerLimit) + lowerLimit;
 }
 
