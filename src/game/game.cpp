@@ -55,6 +55,7 @@ void Game::init()
 
     m_playerInventorySize = 0;
     m_playerSpellsSize = 0;
+    m_worldSize = 4;
 
     initGameObjects();
 
