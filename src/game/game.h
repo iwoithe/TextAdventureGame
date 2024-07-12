@@ -166,6 +166,8 @@ private:
     // Relative room, a value 1 - 4, only to be used in moveRoomMenu()
     int _m__moveToRoomRel;
 
+    const String roomRelToString(const int& roomRel) const;
+
     // handleInventoryMenu inputted number
     int _m__himNum = 0;
     // handleSpellMenu inputted number

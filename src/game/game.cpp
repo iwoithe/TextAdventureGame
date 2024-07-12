@@ -485,10 +485,26 @@ void Game::handleMoveRoomMenu(const int& key)
             _m__moveToRoomRel = 4;
             goto finally;
         finally:
-            String().append("\033[1D").append(_m__moveToRoomRel).writeToConsole(false);
+            String("\033[15G\033[0K").append(roomRelToString(_m__moveToRoomRel)).writeToConsole(false);
             break;
         default:
             break;
+    }
+}
+
+const String Game::roomRelToString(const int& roomRel) const
+{
+    switch (_m__moveToRoomRel) {
+        case 1:
+            return String("Move Left");
+        case 2:
+            return String("Move Up");
+        case 3:
+            return String("Move Right");
+        case 4:
+            return String("Move Down");
+        default:
+            return String("You're lost");
     }
 }
 
