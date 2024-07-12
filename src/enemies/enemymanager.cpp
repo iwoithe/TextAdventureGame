@@ -83,12 +83,9 @@ void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
 {
     std::vector<int> enemiesInRoomIndexes;
     for (int i = 0; i < m_enemies.size(); i++) {
-        IEnemy* e = m_enemies[i];
-        if (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y) {
+        if (m_enemies[i]->roomPos().x == roomPos.x && m_enemies[i]->roomPos().y == roomPos.y) {
             enemiesInRoomIndexes.push_back(i);
         }
-
-        e = nullptr;
     }
 
     switch (enemiesInRoomIndexes.size()) {
@@ -99,9 +96,11 @@ void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
             m_enemies.clear();
             break;
         default:
-            IEnemy* e = m_enemies[enemiesInRoomIndexes[randRange(0, enemiesInRoomIndexes.size() - 1)]];
+            int index = enemiesInRoomIndexes[randRange(0, enemiesInRoomIndexes.size() - 1)];
+            IEnemy* e = m_enemies[index];
             delete e;
             e = nullptr;
+            m_enemies.erase(m_enemies.begin() + index);
             break;
     }
 }
