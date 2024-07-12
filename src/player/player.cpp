@@ -19,7 +19,7 @@ Player::Player()
 {
     m_itemId = 0;
     m_playerData = PlayerData(RoomId(0, 0));
-    m_playerData.maxHealth = 20;
+    m_playerData.maxHealth = 50;
     m_playerData.health = m_playerData.maxHealth;
 }
 
