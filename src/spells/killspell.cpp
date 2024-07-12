@@ -9,5 +9,5 @@ KillSpell::KillSpell()
 void KillSpell::cast(const RoomPos& roomPos)
 {
     dispatcher()->dispatch("remove-random-enemy-from-room", Parameters({ Any(roomPos) }));
-    String("Kill spell casted").writeToConsole();
+    String().appendColor(Color::Blue, ColorLayer::Foreground).append("You casted the kill spell").appendColor(Color::Default, ColorLayer::Foreground).writeToConsole();
 }
