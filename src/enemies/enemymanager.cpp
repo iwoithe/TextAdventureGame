@@ -48,7 +48,9 @@ void EnemyManager::attackInRoom(const RoomPos& roomPos)
 {
     for (IEnemy* enemy : m_enemies) {
         if (enemy->roomPos().x == roomPos.x && enemy->roomPos().y == roomPos.y) {
-            enemy->attack();
+            if (enemy != nullptr) {
+                enemy->attack();
+            }
         }
     }
 }
@@ -57,7 +59,9 @@ void EnemyManager::defendInRoom(const RoomPos& roomPos)
 {
     for (IEnemy* enemy : m_enemies) {
         if (enemy->roomPos().x == roomPos.x && enemy->roomPos().y == roomPos.y) {
-            enemy->defend();
+            if (enemy != nullptr) {
+                enemy->defend();
+            }
         }
     }
 }
@@ -77,24 +81,25 @@ void EnemyManager::removeAllEnemiesFromRoom(const RoomPos& roomPos)
 
 void EnemyManager::removeRandomEnemyFromRoom(const RoomPos& roomPos)
 {
-    std::vector<IEnemy*> enemiesInRoom;
+    std::vector<int> enemiesInRoomIndexes;
     for (int i = 0; i < m_enemies.size(); i++) {
         IEnemy* e = m_enemies[i];
         if (e->roomPos().x == roomPos.x && e->roomPos().y == roomPos.y) {
-            enemiesInRoom.push_back(e);
+            enemiesInRoomIndexes.push_back(i);
         }
 
         e = nullptr;
     }
 
-    switch (enemiesInRoom.size()) {
+    switch (enemiesInRoomIndexes.size()) {
         case 0:
             break;
         case 1:
-            delete enemiesInRoom[0];
+            delete m_enemies[0];
+            m_enemies.clear();
             break;
         default:
-            IEnemy* e = enemiesInRoom[randRange(0, enemiesInRoom.size() - 1)];
+            IEnemy* e = m_enemies[enemiesInRoomIndexes[randRange(0, enemiesInRoomIndexes.size() - 1)]];
             delete e;
             e = nullptr;
             break;
