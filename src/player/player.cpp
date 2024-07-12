@@ -149,7 +149,6 @@ void Player::displayStats() const
 {
     String stats;
     stats.appendColor(Color::Cyan, ColorLayer::Foreground);
-    stats.append("Player Stats:\n");
     stats.append("Current Room: (").append(m_playerData.currentRoom.x).append(", ").append(m_playerData.currentRoom.y).append(")\n");
     stats.append("Health: ").append(m_playerData.health);
     stats.appendColor(Color::Default, ColorLayer::Foreground);
