@@ -626,13 +626,18 @@ void String::appendNullTerminator()
     int len = length();
 
     if (m_data[len - 1] != '\0') {
+        // A null temrinator needs to be added as `m_data` does not end in one
         char* temp = new char[len + 1];
-        temp[len] = '\0';
         strcpy_s(temp, len + 1, m_data);
-        delete[] m_data;
-        m_data = nullptr;
-        m_data = new char[len + 1];
+        // Assign the last character to be a null terminator
+        temp[len] = '\0';
+
+        // Clear `m_data` and reinitialize adding one character to accomodate a null terminator
+        clearData(len, true);
+
+        // Copy in the new string with the null terminator
         strcpy_s(m_data, len + 1, temp);
+
         delete[] temp;
         temp = nullptr;
     }
