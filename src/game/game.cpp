@@ -32,6 +32,7 @@
 
 Game::Game()
 {
+    // Initialise once off variables
     srand(time(0));
     loadAvailableItems();
     loadAvailableSpells();
@@ -50,6 +51,8 @@ Game::~Game()
 
 void Game::init()
 {
+    // Reset this game instance/reinitialize all variables etc.
+    // WARNING: Unless in `Game`'s constructor, you must call `Game::clear()` first
     audioEngine()->reset();
     audioEngine()->start();
 
@@ -57,10 +60,12 @@ void Game::init()
     m_playerSpellsSize = 0;
     m_worldSize = 4;
 
+    // Load in and initialize all game objects, initialize all dispatcher call backs
     initGameObjects();
 
     m_isRunning = false;
     m_rooms = {};
+    // Add the initial room
     addRoom("Lobby", nullptr, RoomPos(0, 0));
     m_currentRoom = findRoom(RoomPos(0, 0));
 
@@ -448,9 +453,11 @@ void Game::handleMoveRoomMenu(const int& key)
 
         Room* r = findRoom(newPos);
         if (r == nullptr) {
+            // Create a new room at `newPos` as a room doesn't exist there yet
             addRandomRoom(newPos);
             m_currentRoom = findRoom(newPos);
         } else {
+            // Room exists so just set to the result of `Game::findRoom()`
             m_currentRoom = r;
         }
 
@@ -458,14 +465,13 @@ void Game::handleMoveRoomMenu(const int& key)
             String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") is empty").writeToConsole();
         } else {
             String("Room (").append(m_currentRoom->roomPos().x).append(", ").append(m_currentRoom->roomPos().y).append(") has item ").append(m_currentRoom->item()->name()).writeToConsole();
-        }
-
-        dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
-        if (m_currentRoom) {
             dispatcher()->dispatch("player-add-item-to-inventory", Parameters({ Any(m_currentRoom->item()) }));
             m_currentRoom->removeItem();
         }
 
+        dispatcher()->dispatch("player-move-room", Parameters({ Any(dir) }));
+
+        // Make all enemies in the current room attack the player
         dispatcher()->dispatch("enemy-manager-attack-in-room", Parameters({ Any(m_currentRoom->roomPos()) }));
 
         setMenu(Menu::Main);
@@ -485,6 +491,7 @@ void Game::handleMoveRoomMenu(const int& key)
             _m__moveToRoomRel = 4;
             goto finally;
         finally:
+            // Set cursor to column 15, then delete all output until the end of the line, append the direction text and don't add a newline/flush console output
             String("\033[15G\033[0K").append(roomRelToString(_m__moveToRoomRel)).writeToConsole(false);
             break;
         default:
@@ -514,9 +521,8 @@ void Game::handleInventoryMenu(const int& key)
         // Flush and end the current line
         String().writeToConsole();
         
-        // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as index + 1
+        // _m__himNum - 1 as Player::useInventoryItem uses 0-index, but items listed out as `index + 1` in the UI
         dispatcher()->dispatch("player-use-inventory-item", Parameters({ Any(_m__himNum - 1) }));
-
         dispatcher()->dispatch("enemy-manager-attack-in-room", Parameters({ Any(m_currentRoom->roomPos()) }));
 
         _m__himNum = 0;
@@ -524,8 +530,11 @@ void Game::handleInventoryMenu(const int& key)
     }
 
     if (key == KEY_BACKSPACE) {
+        // Move cursor back the number of inputted digits and clear the rest of the line
         String("\033[").append(numDigitsInNum(_m__himNum)).append("D\033[0K").writeToConsole(false);
+        // Remove the last digit (implicit integer cast automatically removes any decimals)
         _m__himNum /= 10;
+        // Rewrite the new number to the screen
         String(_m__himNum).writeToConsole(false);
     }
 
@@ -561,6 +570,7 @@ void Game::handleInventoryMenu(const int& key)
             _m__himNum = concatenateInts(_m__himNum, 9);
             goto finally;
         finally:
+            // Move cursor back number of inputted digits, delete rest of line and append the new number
             // numDigitsInNum(_m__himNum) - 1 as _m__himNum now has one more digit than is outputted
             String("\033[").append(numDigitsInNum(_m__himNum) - 1).append("D\033[0K").append(_m__himNum).writeToConsole(false);
             break;
@@ -585,8 +595,11 @@ void Game::handleSpellMenu(const int& key)
     }
 
     if (key == KEY_BACKSPACE) {
+        // Move cursor back the number of inputted digits and clear the rest of the line
         String("\033[").append(numDigitsInNum(_m__hsmNum)).append("D\033[0K").writeToConsole(false);
+        // Remove the last digit (implicit integer cast automatically removes any decimals)
         _m__hsmNum /= 10;
+        // Rewrite the new number to the screen
         String(_m__hsmNum).writeToConsole(false);
     }
 
@@ -622,6 +635,7 @@ void Game::handleSpellMenu(const int& key)
             _m__hsmNum = concatenateInts(_m__hsmNum, 9);
             goto finally;
         finally:
+            // Move cursor back number of inputted digits, delete rest of line and append the new number
             // numDigitsInNum(_m__himNum) - 1 as _m__himNum now has one more digit than is outputted
             String("\033[").append(numDigitsInNum(_m__hsmNum) - 1).append("D\033[0K").append(_m__hsmNum).writeToConsole(false);
             break;
@@ -637,6 +651,7 @@ void Game::handleListMenu(const int& key)
     int itemIndex = binarySearch(m_availableItemsNames, _m__hlmStr);
 
     if (itemIndex != -1) {
+        // Match in items list
         String text;
         text.append(m_availableItemsNames[itemIndex]);
         text.append(": ");
@@ -645,9 +660,11 @@ void Game::handleListMenu(const int& key)
         return;
     }
 
+    // No match in the items index, try searching through spells
     int spellIndex = binarySearch(m_availableSpellsNames, _m__hlmStr);
 
     if (spellIndex != -1) {
+        // Match in spells list
         String text;
         text.append(m_availableSpellsNames[spellIndex]);
         text.append(": ");
@@ -705,6 +722,7 @@ void Game::run()
                 gameOverPromptChar = 'n';
                 goto finally;
             finally:
+                // Move cursor back one column and write the inputted character
                 String().append("\033[1D").append(String(gameOverPromptChar)).writeToConsole(false);
                 break;
             default:
@@ -715,6 +733,7 @@ void Game::run()
     String().writeToConsole();
 
     if (playAgain) {
+        // A cheat way for replaying as then this class reinitializes all game objects (and as a result all their default values are reset automatically)
         clear();
         init();
         run();
