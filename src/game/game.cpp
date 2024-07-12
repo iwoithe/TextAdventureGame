@@ -397,6 +397,9 @@ void Game::handleMainMenu(const int& key)
             setMenu(Menu::ListMenu);
             break;
         case KEY_w:
+            // Here's a little easter egg for reading the code to find this ;)
+            String().writeToConsole();
+            String("You won!").writeToConsole();
             audioEngine()->playWin();
             m_isRunning = false;
             break;
