@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(${PROJECT_SOURCE_DIR}/buildscripts/BuildModule.cmake)
 
 set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_INSTALL_PREFIX ./install)
 
 add_subdirectory(thirdparty)
 add_subdirectory(src)
