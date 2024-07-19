@@ -10,4 +10,9 @@ target_link_libraries(textadventuregame PRIVATE
     game
 )
 
+if (MSVC)
+    set_property(TARGET textadventuregame PROPERTY VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT textadventuregame)
+endif()
+
 install(TARGETS textadventuregame DESTINATION bin)
