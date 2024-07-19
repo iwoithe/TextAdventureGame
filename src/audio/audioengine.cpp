@@ -147,9 +147,10 @@ void AudioEngine::reset()
 {
     ma_sound_seek_to_pcm_frame(&m_introSound, 0);
     ma_sound_seek_to_pcm_frame(&m_gameLoopSound, 0);
+    ma_sound_seek_to_pcm_frame(&m_winSound, 0);
 
-    ma_sound_set_fade_in_milliseconds(&m_introSound, -1, 1, 1000);
-    ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 1, 1000);
+    ma_sound_set_fade_in_milliseconds(&m_introSound, -1, 1, 0);
+    ma_sound_set_fade_in_milliseconds(&m_gameLoopSound, -1, 1, 0);
 
     ma_sound_set_looping(&m_gameLoopSound, true);
 
@@ -157,4 +158,6 @@ void AudioEngine::reset()
     m_isWinPlaying = false;
     m_fadingOutIntro = false;
     m_fadingOutGameLoop = false;
+    m_waitingForIntro = false;
+    m_waitingForGameLoop = false;
 }
